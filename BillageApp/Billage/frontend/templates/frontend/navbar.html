@@ -1,0 +1,13 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static '/css/navbar.css'%}">
+
+<nav class="navbar" id="navbar">
+    <img id="logo" src="{% static '/images/logo.png' %}">
+    <div class="navbar-userinfo">
+      <span class="navbar-username" id="username"></span>
+      <button class="btn-primary btn-navbar">Account</button>
+      <button class="btn-primary btn-navbar">Sign Out</button>
+    </div>
+  </nav>
+  

@@ -1,0 +1,48 @@
+#loading-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  #loading-icon > div {
+    width: 12px;
+    height: 12px;
+    margin: 0 6px;
+    border-radius: 50%;
+    background-color: #364d31;
+    animation: loading-spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  }
+  
+  #loading-icon > div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  
+  #loading-icon > div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  
+  #loading-icon > div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  
+  @keyframes loading-spinner {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+  
+    50% {
+      opacity: 1;
+    }
+  
+    100% {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
+  

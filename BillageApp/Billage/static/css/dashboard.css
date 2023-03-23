@@ -1,0 +1,57 @@
+  @media screen and (min-width: 768px) {
+    .full-height {
+      height: calc(100vh - 130px);
+      margin-bottom: 16px;
+      margin-left: 30px;
+    }
+  
+    .col-lg-6 {
+      flex: none;
+      margin-bottom: 16px;
+      flex-basis: 49%;
+    }
+  
+    .right-containers {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+  
+    .right-containers .col-md-12 {
+      flex: none;
+      flex-basis: 100%;
+      width: 100%;
+    }
+
+    .fullrow {
+        margin-left: 5px;
+        width: 100%;
+    }
+
+    #bankicon,
+    #ccicon {
+    height: 45px;
+    width: auto;
+    }
+
+    .payment-details-col {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      }
+
+    .edit-payment-btn{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    hr {
+      border-color:rgb(205, 218, 202);
+    }
+
+  }
+
+  

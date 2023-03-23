@@ -1,0 +1,40 @@
+.center-container {
+    border-radius: 75px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+div {
+    padding: 1%;
+}
+
+.border {
+    border: 2px solid black;
+}
+
+.container-sm {
+    padding: 2%;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 20px;
+
+}
+
+.center-container #logo {
+    max-width: 300px;
+    align-items: center;
+    padding: 2%;
+    display: block;
+    margin: auto;
+}
+
+.loginfailed {
+    color: red;
+    margin-top: 10px;
+  }
+
+.registerfailed {
+color: red;
+margin-top: 10px;
+}

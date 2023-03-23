@@ -1,0 +1,39 @@
+body {
+    background-color: #eef3ed;
+    color: #333;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+
+.btn-primary {
+    background-color: #364d31;
+    border: #364d31;
+    border-radius: 20px;
+    padding: 7.5px 15px;
+}
+
+.btn-primary:hover {
+    background-color: #b0dba6 !important;
+    border: #b0dba6;
+    border-radius: 30px;
+    padding: 15px 30px;
+    color: #333;
+}
+
+.btn-secondary {
+    font-size: 12px ;
+    background-color: #b0dba6;
+    border: #b0dba6;
+    border-radius: 20px;
+    padding: 7.5px 15px;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background-color: #364d31 !important;
+    border: #364d31;
+    border-radius: 30px;
+    padding: 15px 30px;
+}
+
+

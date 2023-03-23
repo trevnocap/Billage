@@ -1,0 +1,107 @@
+{% extends 'frontend/index.html' %}
+{% include 'frontend/navbar.html' %}
+{% load static %}
+
+{% block navbar %} {% include 'frontend/navbar.html' %} {% endblock navbar %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static '/css/dashboard.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static '/css/loading_icon.css'%}">
+{% endblock styles %}
+
+
+{% block content %}
+<div id="loading-icon">
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+<div id="main">
+  <div class="container-fluid mt-4">
+    
+    <div class="row">
+      <div class="col-md-12 col-lg-6 bg-light full-height p-3" style= "border-radius: 24px;">
+        <div class="bg-light p-3">
+          <div class = "row fullrow toprow">
+            <h2>Activity</h2>
+          </div>
+          <hr>
+
+        </div>
+      </div>
+
+      <div class="col-md-12 col-lg-6 right-containers">
+        <div class="row fullrow">
+
+          <div class="col-md-12 mb-3 top-container">
+            <div class="bg-light p-3" style="height: 100%; border-radius: 24px;">
+              <div class = "row fullrow toprow">
+                <h2>Billages</h2>
+              </div>
+              <hr>
+
+
+              
+            </div>
+          </div>
+
+          <div class="col-md-12 bottom-container">
+            <div class="bg-light p-3" style="height: 100%; border-radius: 24px;">
+              <div class = "row fullrow toprow">
+                <h2>Payment Methods</h2>
+              </div>
+              <hr>
+
+              <div class = "row fullrow col-header-row">
+                <div class="col-md-6 col-lg-6 left-col text-center mt-5">
+                  <h3>Bank Account</h3>
+                  <img id="bankicon" class="payment-icon mt-3" src="{% static '/images/bankicon.png' %}">
+                </div>
+                <div class="col-md-6 col-lg-6 right-col text-center mt-5">
+                  <h3>Credit Card</h3>
+                  <img id="ccicon" class="payment-icon mt-3" src="{% static '/images/creditcardicon.png' %}">
+                </div>
+
+              </div>
+              <div class="row fullrow payment-content-row">
+                <div class="col-md-6 col-lg-6 left-col">
+                  <div class="row">
+                    <div class="col-md-12 col-lg-12 payment-details-col mt-3">
+                      <p id='routing_number'><!--routing number--></p>
+                      <p id='account_number'><!--account number--></p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-lg-6 right-col mt-3">
+                  <div class="row">
+                    <div class="col-md-12 col-lg-12 payment-details-col">
+                      <p id="card_number"><!--card number--></p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row fullrow payment-content-row">
+                  <div class="col-md-6 col-lg-6 edit-payment-btn">
+                    <button class ="btn btn-secondary mt-3" id="bank_button"><!--bank number--></button>
+                  </div>
+                  <div class="col-md-6 col-lg-6 edit-payment-btn">
+                    <button class ="btn btn-secondary mt-3" id="card_button"><!--card button--></button>
+                  </div>
+                </div>
+              </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="{% static '/js/dashboardparse.js' %}"></script>
+{% endblock content %}
