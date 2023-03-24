@@ -54,7 +54,7 @@ class PaymentMethodsSerializer(serializers.ModelSerializer):
 class BillageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Billage
-        exclude = ('date_created', 'billage_members')
+        exclude = ('date_created',)
         
         
 #Bill Serializers

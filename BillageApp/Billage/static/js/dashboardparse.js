@@ -17,13 +17,35 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     const usernameElement = document.getElementById("username");
     usernameElement.innerHTML = data.user.username;
     
+    //Billages Data
+    if (data.billages.length !== 0){
+      console.log(data.billages);
+
+      const container = document.getElementById('billages');
+      const list = document.createElement('ul');
+
+      data.billages.map(billage => {
+        const listBillage = document.createElement('li');
+        listBillage.className = ""
+        listBillage.textContent = billage.billage_name + ' ' + billage.billage_members.length;
+        list.appendChild(listBillage);
+      });
+
+      container.append(list);
+    }else{
+      const container = document.getElementById('billages');
+      const p = document.createElement('p');
+      p.textContent = "Join or create a new Billage";
+      container.append(p)
+    }
+
     // Payment Details
     const bankRoutingElement = document.getElementById("routing_number");
     const bankAccountElement = document.getElementById("account_number");
     const cardNumberElement = document.getElementById("card_number");
     const bankButtonElement = document.getElementById("bank_button");
     const cardButtonElement = document.getElementById("card_button");
-
+    
     if (data.payment_methods.bank_account !== null || data.payment_methods.credit_card !== null) {
         //Bank Account
         if (data.payment_methods.bank_account) {

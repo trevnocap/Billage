@@ -23,6 +23,7 @@ def create_billage_id():
 #Defines a billage group and its members in which bills can be linked to
 class Billage(models.Model):
     billage_id = models.CharField(primary_key=True, max_length = 8, default=create_billage_id, editable=False)
+    billage_image = models.ImageField(default="villageicon.png")
     billage_members = models.ManyToManyField(User)
     billage_name = models.CharField(max_length=50, null=False)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
