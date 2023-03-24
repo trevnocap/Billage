@@ -28,10 +28,15 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         const listBillage = document.createElement('li');
         listBillage.className = ""
         listBillage.textContent = billage.billage_name + ' ' + billage.billage_members.length;
+
+        const billageImage = document.createElement('img');
+        billageImage.src = billage.billage_image;
+        listBillage.appendChild(billageImage);
         list.appendChild(listBillage);
       });
 
       container.append(list);
+
     }else{
       const container = document.getElementById('billages');
       const p = document.createElement('p');
