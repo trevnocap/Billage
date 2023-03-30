@@ -34,6 +34,11 @@
     width: auto;
     }
 
+    .billage-icon{
+      height: 45px;
+      width: auto;
+    }
+
     .payment-details-col {
       text-align: left;
       display: flex;

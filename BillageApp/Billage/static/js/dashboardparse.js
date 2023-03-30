@@ -18,31 +18,38 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     usernameElement.innerHTML = data.user.username;
     
     //Billages Data
-    if (data.billages.length !== 0){
-      console.log(data.billages);
+    const billageContainer = document.getElementById('billage-row')
+    const billages = data.billages;
 
-      const container = document.getElementById('billages');
-      const list = document.createElement('ul');
-
-      data.billages.map(billage => {
-        const listBillage = document.createElement('li');
-        listBillage.className = ""
-        listBillage.textContent = billage.billage_name + ' ' + billage.billage_members.length;
-
-        const billageImage = document.createElement('img');
-        billageImage.src = billage.billage_image;
-        listBillage.appendChild(billageImage);
-        list.appendChild(listBillage);
-      });
-
-      container.append(list);
-
-    }else{
-      const container = document.getElementById('billages');
-      const p = document.createElement('p');
-      p.textContent = "Join or create a new Billage";
-      container.append(p)
+    function getBillageCardBootstrapClass(billages){
+      if (billages.length === 1) {
+        return ['col-md-12', 'col-lg-12'];
+      } else if (billages.length === 2) {
+        return ['col-md-6', 'col-lg-6'];
+      } else {
+        return ['col-md-4', 'col-lg-4'];
+      }
     }
+
+    const billageColClass = getBillageCardBootstrapClass(billages)
+
+    billages.forEach(billage => {
+      const card = document.createElement('div');
+      card.classList.add('billage_card');
+      card.classList.add(billageColClass[0]);
+      card.classList.add(billageColClass[1]);
+
+      const cardContent = `
+      <img src="${billage.billage_image}" alt="${billage.billage_name}" class= "billage-icon" />
+      <h5>${billage.billage_name}</h5>
+      <p>${billage.billage_members.length} members</p>
+      `;
+
+      card.innerHTML = cardContent;
+
+      billageContainer.append(card)
+    });
+
 
     // Payment Details
     const bankRoutingElement = document.getElementById("routing_number");
