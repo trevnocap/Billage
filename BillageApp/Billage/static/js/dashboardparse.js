@@ -31,17 +31,82 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
       }
     }
 
+    //Billage Carousel
+    function createCarousel(billages) {
+      const carouselId = 'billage-carousel';
+      const carousel = document.createElement('div');
+      carousel.classList.add('carousel', 'slide', 'fullrow');
+      carousel.id = carouselId;
+      carousel.setAttribute('data-ride', 'carousel');
+      carousel.setAttribute('data-interval', 'false');
+    
+      const carouselInner = document.createElement('div');
+      carouselInner.classList.add('carousel-inner');
+    
+      for (let i = 0; i < billages.length; i += 3) {
+        const carouselItem = document.createElement('div');
+        carouselItem.classList.add('carousel-item');
+        if (i === 0) {
+          carouselItem.classList.add('active');
+        }
+    
+        const row = document.createElement('div');
+        row.classList.add('row');
+    
+        for (let j = i; j < i + 3 && j < billages.length; j++) {
+          const billage = billages[j];
+          const card = document.createElement('div');
+          card.classList.add('billage_card');
+          card.classList.add(billageColClass[0]);
+          card.classList.add(billageColClass[1]);
+          card.classList.add("text-center");
+    
+          const cardContent = `
+          <img src="${billage.billage_image}" alt="${billage.billage_name}" class="billage-icon" />
+          <h5>${billage.billage_name}</h5>
+          <p>${billage.billage_members.length} members</p>
+          <button class="btn btn-secondary mt-3">Manage Billage</button>
+          `;
+    
+          card.innerHTML = cardContent;
+          row.appendChild(card);
+        }
+    
+        carouselItem.appendChild(row);
+        carouselInner.appendChild(carouselItem);
+      }
+    
+      carousel.appendChild(carouselInner);
+    
+      const carouselControls = `
+      <div class="carousel-control-outer">
+        <a class="carousel-control-prev" href="#${carouselId}" role="button" data-slide="prev">
+          <svg class="carousel-control-prev-icon" aria-hidden="true" viewBox="0 0 16 16">
+            <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+          </svg>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#${carouselId}" role="button" data-slide="next">
+          <svg class="carousel-control-next-icon" aria-hidden="true" viewBox="0 0 16 16">
+            <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+    `;
+      carousel.insertAdjacentHTML('beforeend', carouselControls);
+
+      billageContainer.appendChild(carousel);
+    }
+    
     const billageColClass = getBillageCardBootstrapClass(billages)
     console.log(billages.length)
 
-
+    //Decide how and what to display in billage container
     if (billages.length === 0){
       // no billage display
       const card = document.createElement('div');
-      card.classList.add('billage_card');
-      card.classList.add(billageColClass[0]);
-      card.classList.add(billageColClass[1]);
-      card.classList.add("text-center");
+      card.classList.add('billage_card', 'text-center', billageColClass[0], billageColClass[1]);
 
       const cardContent = `
       <p>You do not belong to a Billage yet, create or join one!</p>
@@ -53,15 +118,13 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
 
       billageContainer.append(card)
     }
-    else {
+
+    else if (billages.length <= 3) {
       // 1-3 billages
       billages.forEach(billage => {
 
         const card = document.createElement('div');
-        card.classList.add('billage_card');
-        card.classList.add(billageColClass[0]);
-        card.classList.add(billageColClass[1]);
-        card.classList.add("text-center");
+        card.classList.add('billage_card', 'text-center', billageColClass[0], billageColClass[1]);
 
         const cardContent = `
         <img src="${billage.billage_image}" alt="${billage.billage_name}" class= "billage-icon" />
@@ -75,6 +138,10 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         billageContainer.append(card)
 
       });
+    }
+
+    else {
+      createCarousel(billages)
     }
 
     // Payment Details

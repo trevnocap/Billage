@@ -57,6 +57,51 @@
       border-color:rgb(205, 218, 202);
     }
 
+    .carousel-control-outer {
+      width: 100%;
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .carousel-control-prev {
+      left: 0;
+    }
+    
+    .carousel-control-next {
+      right: 0;
+    }
+    
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .carousel-control-prev-icon svg,
+    .carousel-control-next-icon svg {
+      fill: #364d31;
+      width: 24px;
+      height: 24px;
+    }
+
+    
+    .carousel-control-prev-icon {
+      left: 10px;
+    }
+    
+    .carousel-control-next-icon {
+      right: 10px;
+    }
+    
+    
+
   }
 
   
