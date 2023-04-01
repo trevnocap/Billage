@@ -22,7 +22,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     const billages = data.billages;
 
     function getBillageCardBootstrapClass(billages){
-      if (billages.length === 1) {
+      if (billages.length <= 1) {
         return ['col-md-12', 'col-lg-12'];
       } else if (billages.length === 2) {
         return ['col-md-6', 'col-lg-6'];
@@ -32,24 +32,50 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     }
 
     const billageColClass = getBillageCardBootstrapClass(billages)
+    console.log(billages.length)
 
-    billages.forEach(billage => {
+
+    if (billages.length === 0){
+      // no billage display
       const card = document.createElement('div');
       card.classList.add('billage_card');
       card.classList.add(billageColClass[0]);
       card.classList.add(billageColClass[1]);
+      card.classList.add("text-center");
 
       const cardContent = `
-      <img src="${billage.billage_image}" alt="${billage.billage_name}" class= "billage-icon" />
-      <h5>${billage.billage_name}</h5>
-      <p>${billage.billage_members.length} members</p>
+      <p>You do not belong to a Billage yet, create or join one!</p>
+      <button class ="btn btn-secondary mt-3">Create Billage</button>
+      <div><button class ="btn btn-secondary mt-3">Join Billage</button></div>
       `;
 
       card.innerHTML = cardContent;
 
       billageContainer.append(card)
-    });
+    }
+    else {
+      // 1-3 billages
+      billages.forEach(billage => {
 
+        const card = document.createElement('div');
+        card.classList.add('billage_card');
+        card.classList.add(billageColClass[0]);
+        card.classList.add(billageColClass[1]);
+        card.classList.add("text-center");
+
+        const cardContent = `
+        <img src="${billage.billage_image}" alt="${billage.billage_name}" class= "billage-icon" />
+        <h5>${billage.billage_name}</h5>
+        <p>${billage.billage_members.length} members</p>
+        <button class ="btn btn-secondary mt-3">Manage Billage</button>
+        `;
+
+        card.innerHTML = cardContent;
+
+        billageContainer.append(card)
+
+      });
+    }
 
     // Payment Details
     const bankRoutingElement = document.getElementById("routing_number");
