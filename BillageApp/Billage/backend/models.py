@@ -142,6 +142,14 @@ class LinkedBillSplit(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.bill_being_split.billage_link.billage_name} - {self.bill_being_split.bill_provider_name}"
     
+class UserActiveBillDueAmount(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    linked_bill = models.ForeignKey(LinkedBill, on_delete=models.CASCADE)
+    active_bill = models.ForeignKey(BillageBillActiveBill, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    due_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    bill_due_date = models.DateField(auto_now=False)
+    
     
 #Shows user level history of bills which have been paid
 class UserBillDetailsHistory(models.Model):

@@ -11,6 +11,7 @@ admin.site.register(LinkedBill)
 admin.site.register(LinkedBillSplit)
 admin.site.register(BillageBillActiveBill)
 admin.site.register(UserBillDetailsHistory)
+admin.site.register(UserActiveBillDueAmount)
 
 #Payments
 admin.site.register(UserPaymentMethod)
