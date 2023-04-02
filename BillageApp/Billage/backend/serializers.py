@@ -58,9 +58,9 @@ class BillageSerializer(serializers.ModelSerializer):
         
         
 #Bill Serializers
-class BillageBillActiveBillSerializer(serializers.ModelSerializer):
+class BillageBillSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BillageBillActiveBill
+        model = BillageBill
         exclude = ('date_created',)
 
 class LinkedBillSerializer(serializers.ModelSerializer):

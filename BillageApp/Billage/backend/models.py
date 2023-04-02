@@ -107,7 +107,7 @@ class LinkedBill(models.Model):
         ('Internet', 'Internet'),
         )
     
-    linked_bill_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    linked_bill = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     billage_link = models.ForeignKey(Billage, on_delete=models.CASCADE)
     bill_type = models.CharField(max_length=50, choices=BILL_TYPES, null=False, blank=False)
     bill_provider_name = models.CharField(max_length=100, null=False, blank=False)
@@ -119,7 +119,8 @@ class LinkedBill(models.Model):
     
 
 #Defines a linked bill in the active billing cycle     
-class BillageBillActiveBill(models.Model):
+class BillageBill(models.Model):
+        
     bill_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     linked_bill = models.ForeignKey(LinkedBill, on_delete=models.CASCADE)
     bill_due_amount = models.DecimalField(max_digits = 7, decimal_places = 2, default=0)
@@ -136,35 +137,46 @@ class LinkedBillSplit(models.Model):
     bill_being_split = models.ForeignKey(LinkedBill, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     split_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
-    payment_method = models.ForeignKey(UserPaymentMethod, on_delete=models.CASCADE)
+    payment_method = models.ForeignKey(UserPaymentMethod, on_delete=models.SET_NULL, null=True)
     date_created = models.DateField(auto_now_add=True, null=True)
     
     def __str__(self):
         return f"{self.user.username} - {self.bill_being_split.billage_link.billage_name} - {self.bill_being_split.bill_provider_name}"
     
-class UserActiveBillDueAmount(models.Model):
+class UserActiveBillDue(models.Model):
+    BILL_STATUSES = (
+        ('paid', 'paid'),
+        ('pending payment', 'pending payment'),
+        ('failed payment', 'failed payment'),
+        ('canceled', 'canceled')
+    )
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     linked_bill = models.ForeignKey(LinkedBill, on_delete=models.CASCADE)
-    active_bill = models.ForeignKey(BillageBillActiveBill, on_delete=models.CASCADE)
+    active_bill = models.ForeignKey(BillageBill, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     due_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     bill_due_date = models.DateField(auto_now=False)
+    bill_status = models.CharField(max_length=50, choices = BILL_STATUSES, default= 'pending payment')
+    payment_method = models.ForeignKey(UserPaymentMethod, on_delete=models.SET_NULL, null=True)
     
     
 #Shows user level history of bills which have been paid
 class UserBillDetailsHistory(models.Model):
+    BILL_STATUSES = (
+    ('paid', 'paid'),
+    ('failed payment', 'failed payment'),
+    ('canceled', 'canceled')
+    )
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    userid = models.ForeignKey(User, on_delete=models.CASCADE)
-    bill_id = models.ForeignKey(LinkedBill, on_delete=models.CASCADE)
-    payment_method = models.ForeignKey(UserPaymentMethod, on_delete=models.CASCADE)
-    split_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, 
-        validators=[
-        MinValueValidator(0.0), 
-        MaxValueValidator(1.0)
-        ])
-    amount_paid = models.DecimalField(max_digits = 7, decimal_places = 2, default=0)
-    due_date = models.DateField()
-    paid_date = models.DateField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    linked_bill = models.ForeignKey(LinkedBill, on_delete=models.SET_NULL, null=True)
+    payment_method = models.ForeignKey(UserPaymentMethod, on_delete=models.SET_NULL, null=True)
+    due_amount = models.DecimalField(max_digits = 7, decimal_places = 2, default=0)
+    bill_due_date = models.DateField()
+    bill_status = models.CharField(max_length=50, choices = BILL_STATUSES, null=True)
+    date_created = models.DateField(auto_now_add=True, null=True)
     
     def __str__(self):
-        return f"{self.userid.username} - {self.bill_id.billage_link.billage_name} - {self.bill_id.bill_provider_name} - {self.due_date}"
+        return f"{self.user.username} - {self.linked_bill.billage_link.billage_name} - {self.linked_bill.bill_provider_name} - {self.bill_due_date}"

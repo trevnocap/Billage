@@ -9,9 +9,9 @@ admin.site.register(Billage)
 #Bills
 admin.site.register(LinkedBill)
 admin.site.register(LinkedBillSplit)
-admin.site.register(BillageBillActiveBill)
+admin.site.register(BillageBill)
 admin.site.register(UserBillDetailsHistory)
-admin.site.register(UserActiveBillDueAmount)
+admin.site.register(UserActiveBillDue)
 
 #Payments
 admin.site.register(UserPaymentMethod)
