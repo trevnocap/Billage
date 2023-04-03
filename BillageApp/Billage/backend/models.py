@@ -103,7 +103,8 @@ class LinkedBill(models.Model):
         ('Rent', 'Rent'),
         ('Gas', 'Gas'),
         ('Water', 'Water'),
-        ('Television', 'Television'),
+        ('cable', 'cable'),
+        ('streaming', "streaming"),
         ('Internet', 'Internet'),
         )
     

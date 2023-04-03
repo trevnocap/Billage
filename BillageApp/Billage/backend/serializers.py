@@ -71,6 +71,7 @@ class LinkedBillSerializer(serializers.ModelSerializer):
 class UserActiveBillDueSerializer(serializers.ModelSerializer):
     billage = serializers.CharField(source = "linked_bill.billage_link.billage_name")
     bill_provider_name = serializers.CharField(source = 'linked_bill.bill_provider_name')
+    bill_type = serializers.CharField(source = 'linked_bill.bill_type')
     payment_method_name = serializers.CharField(source = "payment_method.name")
     payment_method_type = serializers.CharField(source = "payment_method.payment_type")
     

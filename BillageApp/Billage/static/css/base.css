@@ -36,4 +36,10 @@ body {
     padding: 7.5px 15px;
 }
 
+.border-container{
+    border-color: #b1c5ad !important;
+    border-width: 2px;
+    border-style: solid;
+}
+
 

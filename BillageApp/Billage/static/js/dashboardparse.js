@@ -10,12 +10,131 @@ mainElement.style.display = 'none';
 navbarElement.style.display = 'none';
 loadingIconElement.style.display = 'flex';
 
+//helper functions
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${month}-${day}-${year}`;
+}
+
+function returnIcon(type){
+  const iconLibrary = {
+    bank_account: '/images/bankicon.png',
+    credit_card: '/images/creditcardicon.png',
+    Gas: '/images/gas.png',
+    Cable: '/images/cable.png',
+    Television: '/images/cable.png',
+    streaming: '/images/cable.png',
+    Electric: '/images/electric.png',
+    Rent: '/images/rent.png',
+    Water: '/images/water.png',
+    Internet: '/images/internet.png',
+  };
+
+  console.log(type)
+  console.log(iconLibrary[type])
+  return iconLibrary[type];
+}
+
+
 fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
   .then(response => response.json())
   .then(data => {
     //User Data
     const usernameElement = document.getElementById("username");
     usernameElement.innerHTML = data.user.username;
+
+
+
+    // Bill Activity Data
+    const bill_activity_container = document.getElementById('bill-activity');
+    const active_bills = data.active_bills
+
+    function createBillActivityTable(rows) {
+      const headers = ["Bill", "Billage", "Payment Method", "Due", ""];
+      const table = document.createElement('table');
+      table.classList.add('table');
+
+      const thead = document.createElement('thead');
+      const tr = document.createElement('tr');
+
+      headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        tr.appendChild(th);
+      });
+
+      thead.appendChild(tr);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      
+      // add rows
+      active_bills.forEach(bill => {
+        const tr = document.createElement('tr');
+
+        const td1 = document.createElement('td');
+        const billProviderName = document.createElement('span');
+        billProviderName.textContent = bill.bill_provider_name;
+        
+        const billTypeIcon = document.createElement('img');
+        billTypeIcon.style.maxWidth = '25px';
+        billTypeIcon.style.marginRight = '15px'; // Change marginLeft to marginRight
+        billTypeIcon.src = returnIcon(bill.bill_type);
+        
+        td1.appendChild(billTypeIcon); // Move this line before appending billProviderName
+        td1.appendChild(billProviderName);
+        tr.appendChild(td1);
+
+        const td2 = document.createElement('td');
+        td2.textContent = bill.billage;
+        tr.appendChild(td2);
+
+        const td3 = document.createElement('td');
+        const paymentMethodName = document.createElement('span');
+        paymentMethodName.textContent = bill.payment_method_name;
+        td3.appendChild(paymentMethodName);
+        const paymentIcon = document.createElement('img');
+        paymentIcon.style.maxWidth = '25px';
+        paymentIcon.style.marginLeft = '15px';
+        const icon = returnIcon(bill.payment_method_type)
+        paymentIcon.src = icon;
+        td3.appendChild(paymentIcon);
+        tr.appendChild(td3);
+
+        const td4 = document.createElement('td');
+        const dueAmount = document.createElement('div');
+        dueAmount.textContent = `$${bill.due_amount}`;
+        const dueDate = document.createElement('div');
+        dueDate.textContent = formatDate(bill.bill_due_date);
+        td4.appendChild(dueAmount);
+        td4.appendChild(dueDate);
+        tr.appendChild(td4);
+        
+
+        const td5 = document.createElement('td');
+        const payButton = document.createElement('button');
+        payButton.textContent = 'Pay Bill Early';
+        payButton.classList.add('btn', 'btn-secondary');
+        td5.appendChild(payButton);
+        tr.appendChild(td5);
+
+        tbody.appendChild(tr);
+      });
+      //
+      table.appendChild(tbody);
+
+      bill_activity_container.appendChild(table);
+
+    }
+  
+    createBillActivityTable(active_bills)
+
+
+
     
     //Billages Data
     const billageContainer = document.getElementById('billage-row')
@@ -143,6 +262,8 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     else {
       createCarousel(billages)
     }
+
+
 
     // Payment Details
     const bankRoutingElement = document.getElementById("routing_number");
