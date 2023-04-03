@@ -102,17 +102,28 @@ class DashboardView(APIView):
         #payment methods data
         payment_methods_data = payment_methods_fetch(user_id)
         
+        ##User Bill Details to display
+        max_bill_display_count = 8
         #active bills data
-        
+        active_bills_query = UserActiveBillDue.objects.filter(user = user_id)
+        active_bills_to_display = active_bills_query.order_by('bill_due_date')[:max_bill_display_count]
+        serializer = UserActiveBillDueSerializer(active_bills_to_display, many=True)
+        active_bills_data = {"active_bills": serializer.data}
         
         #bill history
-     
+        bill_history_display_count = max_bill_display_count - active_bills_to_display.count()
+        bill_history_query = UserBillDetailsHistory.objects.filter(user = user_id)
+        bill_history_to_display = bill_history_query.order_by('date_closed')[:bill_history_display_count]
+        serializer = UserBillDetailsHistorySerliazer(bill_history_to_display, many=True)
+        bill_history_data = {"bill_history": serializer.data}
         
 
         #response
         response_data = {}
         response_data.update(user_data)
         response_data.update(billage_data)
+        response_data.update(active_bills_data)
+        response_data.update(bill_history_data)
         response_data.update({"payment_methods": payment_methods_data})
         
         

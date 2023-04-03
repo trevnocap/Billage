@@ -176,7 +176,7 @@ class UserBillDetailsHistory(models.Model):
     due_amount = models.DecimalField(max_digits = 7, decimal_places = 2, default=0)
     bill_due_date = models.DateField()
     bill_status = models.CharField(max_length=50, choices = BILL_STATUSES, null=True)
-    date_created = models.DateField(auto_now_add=True, null=True)
+    date_closed = models.DateField(auto_now_add=True, null=True)
     
     def __str__(self):
         return f"{self.user.username} - {self.linked_bill.billage_link.billage_name} - {self.linked_bill.bill_provider_name} - {self.bill_due_date}"

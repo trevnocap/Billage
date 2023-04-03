@@ -68,7 +68,24 @@ class LinkedBillSerializer(serializers.ModelSerializer):
         model = LinkedBill
         exclude = ('date_created',)
         
+class UserActiveBillDueSerializer(serializers.ModelSerializer):
+    billage = serializers.CharField(source = "linked_bill.billage_link.billage_name")
+    bill_provider_name = serializers.CharField(source = 'linked_bill.bill_provider_name')
+    payment_method_name = serializers.CharField(source = "payment_method.name")
+    payment_method_type = serializers.CharField(source = "payment_method.payment_type")
+    
+    
+    class Meta:
+        model = UserActiveBillDue
+        exclude = ('id', 'user', 'active_bill', 'linked_bill', "payment_method",)
+        
+        
 class UserBillDetailsHistorySerliazer(serializers.ModelSerializer):
+    billage = serializers.CharField(source = "linked_bill.billage_link.billage_name")
+    bill_provider_name = serializers.CharField(source = 'linked_bill.bill_provider_name')
+    payment_method_name = serializers.CharField(source = "payment_method.name")
+    payment_method_type = serializers.CharField(source = "payment_method.payment_type")
+    
     class Meta:
         model = UserBillDetailsHistory
-        exclude = ('userid', 'id',)
+        exclude = ('id', 'user', 'linked_bill', "payment_method",)
