@@ -31,25 +31,23 @@ class UserSerializer(serializers.ModelSerializer):
 ### DASHBOARD SERIALIZERS
 
 #Payment Method Serializers
-class UserBankAccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserBankAccount
-        fields = ("bankaccount_id", "bank_routing_number", "bank_account_number",)
-
-class UserCreditCardSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserCreditCard
-        fields = ("card_id", "card_number",)
-
-
 class PaymentMethodsSerializer(serializers.ModelSerializer):
-    bank_account = UserBankAccountSerializer(source='userbankaccount')
-    credit_card = UserCreditCardSerializer(source='usercreditcard')
-
+    payment_details = serializers.SerializerMethodField()
+    
     class Meta:
         model = UserPaymentMethod
-        fields = '__all__'
-
+        exclude = ('user', 'payment_method_id',)
+        
+    def get_payment_details(self, obj):
+        if obj.payment_type == 'bank_account':
+            bank_account = UserBankAccount.objects.get(payment_method_id=obj)
+            return bank_account.bank_account_number[-4:]
+        elif obj.payment_type == 'credit_card':
+            credit_card = UserCreditCard.objects.get(payment_method_id=obj)
+            return credit_card.card_number[-4:]
+        else:
+            return None
+        
 #Billage Serializers  
 class BillageSerializer(serializers.ModelSerializer):
     class Meta:

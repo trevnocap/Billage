@@ -175,10 +175,8 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         for (let j = i; j < i + 3 && j < billages.length; j++) {
           const billage = billages[j];
           const card = document.createElement('div');
-          card.classList.add('billage_card');
-          card.classList.add(billageColClass[0]);
-          card.classList.add(billageColClass[1]);
-          card.classList.add("text-center");
+          card.classList.add('billage_card', 'text-center', billageColClass[0], billageColClass[1], 'mt-4');
+
     
           const cardContent = `
           <img src="${billage.billage_image}" alt="${billage.billage_name}" class="billage-icon" />
@@ -243,7 +241,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
       billages.forEach(billage => {
 
         const card = document.createElement('div');
-        card.classList.add('billage_card', 'text-center', billageColClass[0], billageColClass[1]);
+        card.classList.add('billage_card', 'text-center', billageColClass[0], billageColClass[1], 'mt-4');
 
         const cardContent = `
         <img src="${billage.billage_image}" alt="${billage.billage_name}" class= "billage-icon" />
@@ -254,7 +252,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
 
         card.innerHTML = cardContent;
 
-        billageContainer.append(card)
+        billageContainer.append(card);
 
       });
     }
@@ -266,40 +264,71 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
 
 
     // Payment Details
-    const bankRoutingElement = document.getElementById("routing_number");
-    const bankAccountElement = document.getElementById("account_number");
-    const cardNumberElement = document.getElementById("card_number");
-    const bankButtonElement = document.getElementById("bank_button");
-    const cardButtonElement = document.getElementById("card_button");
-    
-    if (data.payment_methods.bank_account !== null || data.payment_methods.credit_card !== null) {
-        //Bank Account
-        if (data.payment_methods.bank_account) {
-            const userAccountNumber = data.payment_methods.bank_account.bank_account_number;
-            const userRoutingNumber = data.payment_methods.bank_account.bank_routing_number;
-            bankRoutingElement.innerHTML = `Routing Number: ${userRoutingNumber}`;
-            bankAccountElement.innerHTML = `Account Number: ${userAccountNumber}`;
-            bankButtonElement.innerHTML = `Edit Bank`;
-        } else {
-            bankRoutingElement.innerHTML = `Add a Bank Account!`;
-            bankButtonElement.innerHTML = `Add Bank`;
-        }
+    const paymentMethodContainer = document.getElementById("payment-methods");
 
-        //Credit Card
-        if (data.payment_methods.credit_card) {
-            const userCardNumber = data.payment_methods.credit_card.card_number;
-            cardNumberElement.innerHTML = `Card Number: ${userCardNumber}`;
-            cardButtonElement.innerHTML = `Edit Card`;
-        } else {
-            cardNumberElement.innerHTML = `Add a Credit Card!`;
-            cardButtonElement.innerHTML = `Add Card`;
-        }
-    } else {
-        bankRoutingElement.innerHTML = `Add a Bank Account!`;
-        bankButtonElement.innerHTML = `Add Bank`;
-        cardNumberElement.innerHTML = `Add a Credit Card!`;
-        cardButtonElement.innerHTML = `Add Card`;
+    const row = document.createElement("div");
+    row.classList.add('row', 'fullrow');
+
+    const bankCol = document.createElement('div');
+    bankCol.classList.add('col-md-6', 'col-lg-6', 'text-center','mt-4');
+
+    const cardCol = document.createElement('div');
+    cardCol.classList.add('col-md-6', 'col-lg-6', 'text-center','mt-4');
+
+    function parsePaymentDetails(type){
+      const paymentMethods = data.payment_methods;
+      const filteredMethod = paymentMethods.find(method => method.payment_type === type);
+    
+      if (!filteredMethod) {
+        return null;
+      }
+    
+      return {
+        name: filteredMethod.name,
+        payment_details: filteredMethod.payment_details
+      };
+
     }
+
+    const bankDetails = parsePaymentDetails('bank_account');
+    const baseBankContent = bankDetails
+      ? `
+        <h5>Bank Account</h5>
+        <img src="${returnIcon('bank_account')}" class="bankicon mt-2" />
+        <p class="mt-2">Name: ${bankDetails.name}</p>
+        <p>Account Number: ••• ${bankDetails.payment_details}</p>
+        <button class="btn btn-secondary mt-2">Edit Bank</button>
+      `
+      : `
+        <h5>Bank Account</h5>
+        <img src="${returnIcon('bank_account')}" class="bankicon mt-2" />
+        <p class="mt-2">Add a Bank Account!</p>
+        <button class="btn btn-secondary mt-2">Add Bank</button>
+      `;
+
+    const ccDetails = parsePaymentDetails('credit_card');
+    const baseCardContent = ccDetails
+      ? `
+        <h5>Credit Card</h5>
+        <img src="${returnIcon('credit_card')}" class="ccicon mt-2" />
+        <p class="mt-2">Name: ${ccDetails.name}</p>
+        <p>Card Number: ••• ${ccDetails.payment_details}</p>
+        <button class="btn btn-secondary mt-2">Edit Credit Card</button>
+      `
+      : `
+        <h5>Credit Card</h5>
+        <img src="${returnIcon('credit_card')}" class="ccicon mt-2" />
+        <p class="mt-2">Add a Credit Card!</p>
+        <button class="btn btn-secondary mt-2">Add Credit Card</button>
+      `;
+
+    bankCol.innerHTML = baseBankContent;
+    cardCol.innerHTML = baseCardContent;
+
+    row.append(bankCol);
+    row.append(cardCol);
+
+    paymentMethodContainer.appendChild(row);
 
   })
   .catch(error => {

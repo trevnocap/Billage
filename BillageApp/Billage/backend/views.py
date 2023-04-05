@@ -15,29 +15,11 @@ from .serializers import *
 #Reusable functions
 def payment_methods_fetch(user_id):
         user = User.objects.get(id=user_id)
-        payment_methods = UserPaymentMethod.objects.filter(user=user)
-        bank_account_data = None
-        cc_data = None
-        for method in payment_methods:
-            if method.payment_type == "bank_account":
-                bank_account = UserBankAccount.objects.get(payment_method_id = method.payment_method_id)
-                serializer = UserBankAccountSerializer(bank_account)
-                bank_account_data = {"bank_account": serializer.data}
-            else:
-                cc = UserCreditCard.objects.get(payment_method_id = method.payment_method_id)
-                serializer = UserCreditCardSerializer(cc)
-                cc_data = {"credit_card": serializer.data}
-        
-        response_data = {}
-
-        if bank_account_data is not None:
-            response_data.update(bank_account_data)
-        if cc_data is not None:
-            response_data.update(cc_data)
-        if not payment_methods:
-            response_data.update({"bank_account": None, "credit_card": None})
+        payment_methods_query = UserPaymentMethod.objects.filter(user=user)
+        serializer = PaymentMethodsSerializer(payment_methods_query, many=True)
+        payment_method_data = {"payment_methods": serializer.data}
             
-        return response_data
+        return payment_method_data
 
 
 
@@ -124,7 +106,7 @@ class DashboardView(APIView):
         response_data.update(billage_data)
         response_data.update(active_bills_data)
         response_data.update(bill_history_data)
-        response_data.update({"payment_methods": payment_methods_data})
+        response_data.update(payment_methods_data)
         
         
         return Response(response_data)
