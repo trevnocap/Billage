@@ -56,7 +56,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     function createBillActivityTable(rows) {
       const headers = ["Bill", "Billage", "Payment Method", "Due", ""];
       const table = document.createElement('table');
-      table.classList.add('table');
+      table.classList.add('table', 'mt-3', 'px-md-3', 'px-lg-3');
 
       const thead = document.createElement('thead');
       const tr = document.createElement('tr');
@@ -82,7 +82,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         
         const billTypeIcon = document.createElement('img');
         billTypeIcon.style.maxWidth = '25px';
-        billTypeIcon.style.marginRight = '15px'; // Change marginLeft to marginRight
+        billTypeIcon.style.marginRight = '5px'; // Change marginLeft to marginRight
         billTypeIcon.src = returnIcon(bill.bill_type);
         
         td1.appendChild(billTypeIcon); // Move this line before appending billProviderName
@@ -96,13 +96,13 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         const td3 = document.createElement('td');
         const paymentMethodName = document.createElement('span');
         paymentMethodName.textContent = bill.payment_method_name;
-        td3.appendChild(paymentMethodName);
         const paymentIcon = document.createElement('img');
         paymentIcon.style.maxWidth = '25px';
-        paymentIcon.style.marginLeft = '15px';
+        paymentIcon.style.marginRight = '5px';
         const icon = returnIcon(bill.payment_method_type)
         paymentIcon.src = icon;
         td3.appendChild(paymentIcon);
+        td3.appendChild(paymentMethodName);
         tr.appendChild(td3);
 
         const td4 = document.createElement('td');
@@ -125,15 +125,34 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         tbody.appendChild(tr);
       });
       //
+
       table.appendChild(tbody);
 
-      bill_activity_container.appendChild(table);
+      const tableWrapper = document.createElement('div');
+      tableWrapper.appendChild(table);
+
+      bill_activity_container.appendChild(tableWrapper);
 
     }
   
-    createBillActivityTable(active_bills)
+    if (active_bills.length === 0) {
+      messageRow = document.createElement('div')
+      messageRow.classList.add('row')
 
+      col = document.createElement('div')
+      col.classList.add('col-md-12', 'col-lg-12' , 'col-sm-12')
 
+      p = document.createElement('p')
+      p.classList.add('text-center', 'mt-5')
+      p.innerHTML = 'Your upcoming bills will appear here once Billage processes your bills'
+
+      col.appendChild(p)
+      messageRow.appendChild(col)
+      bill_activity_container.appendChild(messageRow)
+    }
+    else{
+      createBillActivityTable(active_bills)
+    }
 
     
     //Billages Data
@@ -154,7 +173,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     function createCarousel(billages) {
       const carouselId = 'billage-carousel';
       const carousel = document.createElement('div');
-      carousel.classList.add('carousel', 'slide', 'fullrow');
+      carousel.classList.add('carousel', 'slide', 'col-md-12', 'col-lg-12', 'col-sm-12');
       carousel.id = carouselId;
       carousel.setAttribute('data-ride', 'carousel');
       carousel.setAttribute('data-interval', 'false');
@@ -217,13 +236,12 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     }
     
     const billageColClass = getBillageCardBootstrapClass(billages)
-    console.log(billages.length)
 
     //Decide how and what to display in billage container
     if (billages.length === 0){
       // no billage display
       const card = document.createElement('div');
-      card.classList.add('billage_card', 'text-center', billageColClass[0], billageColClass[1]);
+      card.classList.add('billage_card', 'text-center', billageColClass[0], billageColClass[1],);
 
       const cardContent = `
       <p>You do not belong to a Billage yet, create or join one!</p>
@@ -262,12 +280,11 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     }
 
 
-
     // Payment Details
     const paymentMethodContainer = document.getElementById("payment-methods");
 
     const row = document.createElement("div");
-    row.classList.add('row', 'fullrow');
+    row.classList.add('row');
 
     const bankCol = document.createElement('div');
     bankCol.classList.add('col-md-6', 'col-lg-6', 'text-center','mt-4');
@@ -329,6 +346,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     row.append(cardCol);
 
     paymentMethodContainer.appendChild(row);
+
 
   })
   .catch(error => {

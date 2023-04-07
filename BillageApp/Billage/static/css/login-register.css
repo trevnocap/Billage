@@ -10,9 +10,12 @@ div {
     padding: 1%;
 }
 
-.border {
-    border: 2px solid black;
+.border-container{
+    border-color: #b1c5ad !important;
+    border-width: 2px;
+    border-style: solid;
 }
+
 
 .container-sm {
     padding: 2%;

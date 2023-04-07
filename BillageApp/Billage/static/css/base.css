@@ -25,21 +25,15 @@ body {
     background-color: #b0dba6;
     border: #b0dba6;
     border-radius: 20px;
-    padding: 7.5px 15px;
+    
     color: #333;
 }
 
 .btn-secondary:hover {
     background-color: #364d31 !important;
     border: #364d31;
-    border-radius: 30px;
-    padding: 7.5px 15px;
+    border-radius: 20px;
 }
 
-.border-container{
-    border-color: #b1c5ad !important;
-    border-width: 2px;
-    border-style: solid;
-}
 
 
