@@ -82,13 +82,6 @@ width: auto;
   background-color: #b1c5ad;
 }
 
-/* For Firefox */
-#bill-activity {
-  scrollbar-width: thin;
-  scrollbar-color: #888 #f1f1f1;
-}
-
 .bill-container {
-  max-height: 100vh;
   overflow-y: auto;
 }

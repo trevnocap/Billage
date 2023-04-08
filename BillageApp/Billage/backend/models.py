@@ -25,7 +25,7 @@ class Billage(models.Model):
     billage_id = models.CharField(primary_key=True, max_length = 8, default=create_billage_id, editable=False)
     billage_image = models.ImageField(default="villageicon.png")
     billage_members = models.ManyToManyField(User)
-    billage_name = models.CharField(max_length=50, null=False)
+    billage_name = models.CharField(max_length=20, null=False)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     
     def __str__(self):
@@ -110,7 +110,7 @@ class LinkedBill(models.Model):
     
     linked_bill = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     billage_link = models.ForeignKey(Billage, on_delete=models.CASCADE)
-    bill_type = models.CharField(max_length=50, choices=BILL_TYPES, null=False, blank=False)
+    bill_type = models.CharField(max_length=20, choices=BILL_TYPES, null=False, blank=False)
     bill_provider_name = models.CharField(max_length=100, null=False, blank=False)
     
     date_created = models.DateField(auto_now_add=True, null=True)
@@ -158,7 +158,7 @@ class UserActiveBillDue(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     due_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     bill_due_date = models.DateField(auto_now=False)
-    bill_status = models.CharField(max_length=50, choices = BILL_STATUSES, default= 'pending payment')
+    bill_status = models.CharField(max_length=20, choices = BILL_STATUSES, default= 'pending payment')
     payment_method = models.ForeignKey(UserPaymentMethod, on_delete=models.SET_NULL, null=True)
     
     

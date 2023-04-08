@@ -1,7 +1,7 @@
 body {
     background-color: #eef3ed;
     color: #333;
-    font-family:Verdana, Geneva, Tahoma, sans-serif
+    font-family: 'Quicksand', sans-serif;
 }
 
 
@@ -35,5 +35,16 @@ body {
     border-radius: 20px;
 }
 
+.btn-info {
+    font-size: 12px ;
+    background-color: #2d302c;
+    border: #2d302c;
+    border-radius: 10px;
+}
 
+.btn-info:hover {
+    background-color: #3a3e39 !important;
+    border: #3a3e39;
+    border-radius: 10px;
+}
 

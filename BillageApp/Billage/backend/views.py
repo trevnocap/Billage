@@ -85,7 +85,7 @@ class DashboardView(APIView):
         payment_methods_data = payment_methods_fetch(user_id)
         
         ##User Bill Details to display
-        max_bill_display_count = 8
+        max_bill_display_count = 7
         #active bills data
         active_bills_query = UserActiveBillDue.objects.filter(user = user_id)
         active_bills_to_display = active_bills_query.order_by('bill_due_date')[:max_bill_display_count]

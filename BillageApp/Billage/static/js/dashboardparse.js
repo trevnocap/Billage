@@ -20,23 +20,35 @@ function formatDate(dateString) {
   return `${month}-${day}-${year}`;
 }
 
-function returnIcon(type){
+function iconGenorator(type){
   const iconLibrary = {
     bank_account: '/images/bankicon.png',
     credit_card: '/images/creditcardicon.png',
     Gas: '/images/gas.png',
     Cable: '/images/cable.png',
-    Television: '/images/cable.png',
     streaming: '/images/cable.png',
     Electric: '/images/electric.png',
     Rent: '/images/rent.png',
     Water: '/images/water.png',
     Internet: '/images/internet.png',
+    generalBill: '/images/bill.png',
   };
 
-  console.log(type)
-  console.log(iconLibrary[type])
-  return iconLibrary[type];
+  if (type in iconLibrary) {
+    return iconLibrary[type];
+  } else {
+    throw new Error(`Unknown icon type: ${type}`);
+  }
+
+}
+
+function returnIcon(type){
+  try{
+    return(iconGenorator(type))
+  }
+  catch (error){
+    return returnIcon('generalBill')
+  }
 }
 
 
@@ -117,7 +129,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
 
         const td5 = document.createElement('td');
         const payButton = document.createElement('button');
-        payButton.textContent = 'Pay Bill Early';
+        payButton.textContent = 'Pay Early';
         payButton.classList.add('btn', 'btn-secondary');
         td5.appendChild(payButton);
         tr.appendChild(td5);
@@ -129,7 +141,19 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
       table.appendChild(tbody);
 
       const tableWrapper = document.createElement('div');
-      tableWrapper.appendChild(table);
+      tableWrapper.classList.add('table-wrapper-container')
+
+      const finalRow = document.createElement('div')
+      finalRow.classList.add('row')
+
+      const allBillsButton = document.createElement('button')
+      allBillsButton.classList.add('btn-info', 'btn-sm', 'ml-4')
+      allBillsButton.innerHTML = 'View All Bills'
+
+      finalRow.appendChild(allBillsButton)
+      tableWrapper.appendChild(table)
+
+      tableWrapper.appendChild(finalRow);
 
       bill_activity_container.appendChild(tableWrapper);
 
@@ -201,7 +225,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
           <img src="${billage.billage_image}" alt="${billage.billage_name}" class="billage-icon" />
           <h5>${billage.billage_name}</h5>
           <p>${billage.billage_members.length} members</p>
-          <button class="btn btn-secondary mt-3">Manage Billage</button>
+          <button class="btn btn-secondary mt-2">Manage Billage</button>
           `;
     
           card.innerHTML = cardContent;
