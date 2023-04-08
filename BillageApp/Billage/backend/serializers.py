@@ -88,3 +88,12 @@ class UserBillDetailsHistorySerliazer(serializers.ModelSerializer):
     class Meta:
         model = UserBillDetailsHistory
         exclude = ('id', 'user', 'linked_bill', "payment_method",)
+
+
+### Billage Serializer
+class CreateBillageSerializer(serializers.ModelSerializer):
+    billage_members = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
+    
+    class Meta:
+        model = Billage
+        exclude = ('date_created', 'billage_id', 'billage_image',)

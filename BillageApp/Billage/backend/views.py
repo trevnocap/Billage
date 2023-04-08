@@ -23,48 +23,8 @@ def payment_methods_fetch(user_id):
 
 
 
-# Create your views here.
-
-class LoginView(APIView):
-    permission_classes = [permissions.AllowAny]
-    authentication_classes = [TokenAuthentication]
+### Page View APIs
     
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            user = authenticate(username=serializer.validated_data['username'], password=serializer.validated_data['password'])
-            
-            if user is not None:
-                login(request, user)
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({'success': True, 'token': token.key, 'id': user.id})
-            else:
-                return Response({'success': False, 'error': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response({'success': False, 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        
-
-class RegisterView(APIView):
-    permission_classes= [permissions.AllowAny]
-    
-    def post(self, request):
-        serializer = RegisterUserSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            user = User.objects.create_user(**serializer.validated_data)
-            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
- 
-##View still needs work. Currently you can update any userid's data from any user_id endpoint   
-class PaymentMethodsView(APIView):
-    permission_classes = [permissions.AllowAny]
-    
-    def get(self, request, user_id):
-        payment_method_data = payment_methods_fetch(user_id)
-        return Response(payment_method_data)
-        
         
 class DashboardView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -110,3 +70,66 @@ class DashboardView(APIView):
         
         
         return Response(response_data)
+    
+    
+    
+    ### Functionality APIs
+    
+class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = [TokenAuthentication]
+    
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            user = authenticate(username=serializer.validated_data['username'], password=serializer.validated_data['password'])
+            
+            if user is not None:
+                login(request, user)
+                token, created = Token.objects.get_or_create(user=user)
+                return Response({'success': True, 'token': token.key, 'id': user.id})
+            else:
+                return Response({'success': False, 'error': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            return Response({'success': False, 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class RegisterView(APIView):
+    permission_classes= [permissions.AllowAny]
+    
+    def post(self, request):
+        serializer = RegisterUserSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            user = User.objects.create_user(**serializer.validated_data)
+            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class CreateJoinBillage(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    def post(self, request):
+        serializer = CreateBillageSerializer(data=request.data)
+
+        if serializer.is_valid():
+            # Create Billage object
+            billage = Billage.objects.create(
+                billage_name=serializer.validated_data['billage_name'],
+            )
+
+            # Add users to billage_members field
+            for user in serializer.validated_data['billage_members']:
+                billage.billage_members.add(user)
+
+            billage.save()
+
+            # Serialize the created Billage instance
+            serializer = CreateBillageSerializer(billage)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        
