@@ -1,3 +1,5 @@
+import { createBillageButtonHandler } from './dashboard.js';
+
 const params = new URLSearchParams(window.location.search);
 const user_id = params.get('user_id');
 
@@ -160,13 +162,13 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     }
   
     if (active_bills.length === 0) {
-      messageRow = document.createElement('div')
+      const messageRow = document.createElement('div')
       messageRow.classList.add('row')
 
-      col = document.createElement('div')
+      const col = document.createElement('div')
       col.classList.add('col-md-12', 'col-lg-12' , 'col-sm-12')
 
-      p = document.createElement('p')
+      const p = document.createElement('p')
       p.classList.add('text-center', 'mt-5')
       p.innerHTML = 'Your upcoming bills will appear here once Billage processes your bills'
 
@@ -269,16 +271,16 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
 
       const cardContent = `
       <p>You do not belong to a Billage yet, create or join one!</p>
-      <button class ="btn btn-secondary mt-3">Create Billage</button>
+      <button class ="btn btn-secondary mt-3 create-billage-button">Create Billage</button>
       <div><button class ="btn btn-secondary mt-3">Join Billage</button></div>
       `;
 
       card.innerHTML = cardContent;
 
       billageContainer.append(card)
-    }
 
-    else if (billages.length <= 3) {
+      
+    }else if (billages.length <= 3) {
       // 1-3 billages
       billages.forEach(billage => {
 
@@ -297,12 +299,11 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         billageContainer.append(card);
 
       });
-    }
-
-    else {
+    }else {
       createCarousel(billages)
     }
 
+    createBillageButtonHandler();
 
     // Payment Details
     const paymentMethodContainer = document.getElementById("payment-methods");
