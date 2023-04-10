@@ -82,7 +82,7 @@ export function billageButtonsHandler() {
                         <input type="text" class="form-control" id="billageName" placeholder="Enter Billage Name">
                         <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
                     </div>
-                        <button class='btn btn-secondary mt-3 mb-5' id='submit-button'>Create Billage</button>
+                        <button class='btn btn-primary mt-3 mb-5' id='submit-button'>Create Billage</button>
                     </div>
                     <div class="col col-md-4 d-flex flex-column align-items-center">
                         <p>• Creating a Billage will allow you to add members and link bills which we will spilt up for you! </p>
@@ -111,7 +111,7 @@ export function billageButtonsHandler() {
                             <input type="text" class="form-control" id="join-billage-id" placeholder="Enter Billage ID">
                             <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
                         </div>
-                        <button class='btn btn-secondary mt-3 mb-5' id='submit-billage-id'>Join Billage</button>
+                        <button class='btn btn-primary mt-3 mb-5' id='submit-billage-id'>Join Billage</button>
                     </div>
                     <div class="col col-md-4 d-flex flex-column align-items-center">
                         <p>• Enter the Billage ID provided by your friend to join their Billage and start sharing bills!</p>

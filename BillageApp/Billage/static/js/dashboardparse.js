@@ -132,7 +132,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         const td5 = document.createElement('td');
         const payButton = document.createElement('button');
         payButton.textContent = 'Pay Early';
-        payButton.classList.add('btn', 'btn-secondary');
+        payButton.classList.add('btn', 'btn-primary');
         td5.appendChild(payButton);
         tr.appendChild(td5);
 
@@ -227,7 +227,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
           <img src="${billage.billage_image}" alt="${billage.billage_name}" class="billage-icon" />
           <h5>${billage.billage_name}</h5>
           <p>${billage.billage_members.length} members</p>
-          <button class="btn btn-secondary mt-2">Manage Billage</button>
+          <button class="btn btn-primary mt-2">Manage Billage</button>
           `;
     
           card.innerHTML = cardContent;
@@ -271,8 +271,8 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
 
       const cardContent = `
       <p>You do not belong to a Billage yet, create or join one!</p>
-      <button class ="btn btn-secondary mt-3 create-billage-button">Create Billage</button>
-      <div><button class ="btn btn-secondary mt-3 join-billage-button">Join Billage</button></div>
+      <button class ="btn btn-primary mt-3 create-billage-button">Create Billage</button>
+      <div><button class ="btn btn-primary mt-3 join-billage-button">Join Billage</button></div>
       `;
 
       card.innerHTML = cardContent;
@@ -293,7 +293,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         <img src="${billage.billage_image}" alt="${billage.billage_name}" class= "billage-icon" />
         <h5>${billage.billage_name}</h5>
         <p>${billage.billage_members.length} members</p>
-        <button class ="btn btn-secondary mt-3">Manage Billage</button>
+        <button class ="btn btn-primary mt-3">Manage Billage</button>
         `;
 
         card.innerHTML = cardContent;
@@ -339,13 +339,13 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         <img src="${returnIcon('bank_account')}" class="bankicon mt-2" />
         <p class="mt-2">Name: ${bankDetails.name}</p>
         <p>Account Number: ••• ${bankDetails.payment_details}</p>
-        <button class="btn btn-secondary mt-2">Edit Bank</button>
+        <button class="btn btn-primary mt-2">Edit Bank</button>
       `
       : `
         <h5>Bank Account</h5>
         <img src="${returnIcon('bank_account')}" class="bankicon mt-2" />
         <p class="mt-2">Add a Bank Account!</p>
-        <button class="btn btn-secondary mt-2">Add Bank</button>
+        <button class="btn btn-primary mt-2">Add Bank</button>
       `;
 
     const ccDetails = parsePaymentDetails('credit_card');
@@ -355,13 +355,13 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         <img src="${returnIcon('credit_card')}" class="ccicon mt-2" />
         <p class="mt-2">Name: ${ccDetails.name}</p>
         <p>Card Number: ••• ${ccDetails.payment_details}</p>
-        <button class="btn btn-secondary mt-2">Edit Credit Card</button>
+        <button class="btn btn-primary mt-2">Edit Credit Card</button>
       `
       : `
         <h5>Credit Card</h5>
         <img src="${returnIcon('credit_card')}" class="ccicon mt-2" />
         <p class="mt-2">Add a Credit Card!</p>
-        <button class="btn btn-secondary mt-2">Add Credit Card</button>
+        <button class="btn btn-primary mt-2">Add Credit Card</button>
       `;
 
     bankCol.innerHTML = baseBankContent;
