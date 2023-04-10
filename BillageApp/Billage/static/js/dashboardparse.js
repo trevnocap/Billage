@@ -303,7 +303,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
       createCarousel(billages)
     }
 
-    billageButtonHandler();
+    billageButtonsHandler();
 
     // Payment Details
     const paymentMethodContainer = document.getElementById("payment-methods");
