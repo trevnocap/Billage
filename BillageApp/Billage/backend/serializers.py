@@ -96,4 +96,8 @@ class CreateBillageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Billage
-        exclude = ('date_created', 'billage_id', 'billage_image',)
+        exclude = ('date_created', 'billage_image',)
+
+class JoinBillageSerializer(serializers.Serializer):
+    billage_id = serializers.CharField()
+    user_id = serializers.IntegerField()

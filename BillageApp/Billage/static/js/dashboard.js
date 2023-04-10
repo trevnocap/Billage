@@ -1,85 +1,128 @@
 const mainElement = document.getElementById('main');
 const navbarElement = document.getElementById('navbar');
+let popupWrapper;
 
-export function createBillageButtonHandler() {
-  const createBillageButtons = document.querySelectorAll('.create-billage-button');
+function createPopup(content) {
 
-  createBillageButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      mainElement.style.filter = 'blur(7px)';
-      navbarElement.style.filter = 'blur(7px)';
-      mainElement.style.pointerEvents = 'none';
-      navbarElement.style.pointerEvents = 'none';
-
-      const popUp = document.createElement('div');
-      popUp.classList.add('col-md-8', 'col-lg-6', 'col-sm-8', 'border-container', 'bg-light');
-
-      const topRow = document.createElement('div');
-      topRow.classList.add('row', 'mt-3');
-
-      const topRowContent = document.createElement('div');
-      topRowContent.classList.add('col-md-12', 'col-lg-12', 'col-sm-12');
-
-      const closeButton = document.createElement('button');
-      closeButton.innerHTML = '❌'
-      closeButton.classList.add('close-button');
-      closeButton.addEventListener('click', () =>{
-        mainElement.style.filter = '';
-        navbarElement.style.filter = '';
-        mainElement.style.pointerEvents = '';
-        navbarElement.style.pointerEvents = '';
+    if (popupWrapper) {
         popupWrapper.remove();
-      });
+    }    
 
-      const logo = document.createElement('img');
-      logo.src = '/images/logo.png';
-      logo.classList.add('popup-logo');
-      topRowContent.appendChild(logo);
-      topRowContent.appendChild(closeButton);
-      topRow.appendChild(topRowContent);
-      popUp.appendChild(topRow);
+    popupWrapper = document.createElement('div');
+    popupWrapper.classList.add('add-billage-popup');
+  
+    const popUp = document.createElement('div');
+    popUp.classList.add('col-md-8', 'col-lg-6', 'col-sm-8', 'border-container', 'bg-light');
+
+    const topRow = document.createElement('div');
+    topRow.classList.add('row', 'mt-3');
+
+    const topRowContent = document.createElement('div');
+    topRowContent.classList.add('col-md-12', 'col-lg-12', 'col-sm-12');
+
+    const closeButton = document.createElement('button');
+    closeButton.innerHTML = '❌'
+    closeButton.classList.add('close-button');
+    closeButton.addEventListener('click', closePopUp);
+
+    const logo = document.createElement('img');
+    logo.src = '/images/logo.png';
+    logo.classList.add('popup-logo');
+    topRowContent.appendChild(logo);
+    topRowContent.appendChild(closeButton);
+    topRow.appendChild(topRowContent);
+    popUp.appendChild(topRow);
 
 
-      const contentRow = document.createElement('div');
-      contentRow.classList.add('row');
+    const contentRow = document.createElement('div');
+    contentRow.classList.add('row');
 
-      const contentRowContentDiv = document.createElement('div');
-      contentRowContentDiv.classList.add('col-md-12', 'col-lg-12', 'col-sm-12', 'mt-3', /*'d-flex' ,'justify-content-center', 'align-items-center'*/);
-      const contentRowContent = `
-      <div class="row mx-2">
-        <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
-            <h2>Create a New Billage!</h2>
-            <div class="form-group mt-3">
-                <label for="billageName">Billage Name:</label>
-                <input type="text" class="form-control" id="billageName" placeholder="Enter Billage Name">
-                <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
-            </div>
-                <button class='btn btn-secondary mt-3 mb-5' id='submit-button'>Create Billage</button>
-            </div>
-            <div class="col col-md-4 d-flex flex-column align-items-center">
-                <p>• Creating a Billage will allow you to add members and link bills which we will spilt up for you! </p>
-            </div>
-        </div>
-    `;
+    const contentRowContentDiv = document.createElement('div');
+    contentRowContentDiv.classList.add('col-md-12', 'col-lg-12', 'col-sm-12', 'mt-3', /*'d-flex' ,'justify-content-center', 'align-items-center'*/);
     
+    contentRowContentDiv.innerHTML = content;
+    contentRow.appendChild(contentRowContentDiv);
+    popUp.appendChild(contentRow);
 
-      contentRowContentDiv.innerHTML = contentRowContent;
-      contentRow.appendChild(contentRowContentDiv);
-      popUp.appendChild(contentRow);
-
- 
-      const popupWrapper = document.createElement('div');
-      popupWrapper.classList.add('add-billage-popup');
-
-      popupWrapper.appendChild(popUp);
-      document.body.appendChild(popupWrapper);
-
-      handleSubmitButton(popupWrapper);
-    });
-  });
+    popupWrapper.appendChild(popUp);
+    document.body.appendChild(popupWrapper);
+}
+  
+function closePopUp() {
+    mainElement.style.filter = '';
+    navbarElement.style.filter = '';
+    mainElement.style.pointerEvents = '';
+    navbarElement.style.pointerEvents = '';
+    popupWrapper.remove();
+    location.reload();
 }
 
-function handleSubmitButton(popupWrapper){
+
+export function billageButtonsHandler() {
+    const createBillageButtons = document.querySelectorAll('.create-billage-button');
+    const joinBillageButton = document.getElementById('join-billage-button');
+
+    createBillageButtons.forEach(button => {
+        button.addEventListener('click', () => {
+
+            mainElement.style.filter = 'blur(7px)';
+            navbarElement.style.filter = 'blur(7px)';
+            mainElement.style.pointerEvents = 'none';
+            navbarElement.style.pointerEvents = 'none';
+
+            const content = `
+                <div class="row mx-2">
+                <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
+                    <h2>Create a New Billage!</h2>
+                    <div class="form-group mt-3">
+                        <label for="billageName">Billage Name:</label>
+                        <input type="text" class="form-control" id="billageName" placeholder="Enter Billage Name">
+                        <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
+                    </div>
+                        <button class='btn btn-secondary mt-3 mb-5' id='submit-button'>Create Billage</button>
+                    </div>
+                    <div class="col col-md-4 d-flex flex-column align-items-center">
+                        <p>• Creating a Billage will allow you to add members and link bills which we will spilt up for you! </p>
+                    </div>
+                </div>
+            `;
+            createPopup(content)
+
+            handleSubmitButton();
+        });
+    });
+
+    joinBillageButton.addEventListener('click', () => {
+        mainElement.style.filter = 'blur(7px)';
+        navbarElement.style.filter = 'blur(7px)';
+        mainElement.style.pointerEvents = 'none';
+        navbarElement.style.pointerEvents = 'none';
+
+        const params = new URLSearchParams(window.location.search);
+        const user_id = params.get('user_id');
+
+        content = `
+            <div class="row mx-2">
+                <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
+                    <h2>Join a Billage!</h2>
+                    <div class="form-group mt-3">
+                        <label for="joinBillageID">Billage ID:</label>
+                        <input type="text" class="form-control" id="joinBillageID" placeholder="Enter Billage ID">
+                        <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
+                    </div>
+                    <button class='btn btn-secondary mt-3 mb-5' id='join-billage-button'>Join Billage</button>
+                </div>
+                <div class="col col-md-4 d-flex flex-column align-items-center">
+                    <p>• Enter the Billage ID provided by your friend to join their Billage and start sharing bills!</p>
+                </div>
+            </div>
+        `
+
+        createPopup(content);
+    });
+}
+
+function handleSubmitButton(){
     const params = new URLSearchParams(window.location.search);
     const user_id = params.get('user_id');
 
@@ -116,15 +159,8 @@ function handleSubmitButton(popupWrapper){
         
                 if (response.status === 201) {
                     errorHandler.style.display = 'none';
-                    console.log('Billage created successfully!');
                     const responseData = await response.json();
-                    console.log('Response data:', responseData);
-                    mainElement.style.filter = '';
-                    navbarElement.style.filter = '';
-                    mainElement.style.pointerEvents = '';
-                    navbarElement.style.pointerEvents = '';
-                    popupWrapper.remove();
-                    location.reload();
+                    showNewBillageData(responseData);
                 } else {
                     errorHandler.textContent = 'An error occurred while creating your billage! Please try again later.'
                     errorHandler.style.display = 'block';
@@ -140,4 +176,26 @@ function handleSubmitButton(popupWrapper){
         }
     
     });
+}
+
+function showNewBillageData(responseData){
+    const billageID = responseData['billage_id'];
+
+    const content = `
+        <div class="row mx-2">
+            <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
+                <h2>Billage Successfully Created!</h2>
+                <div class="form-group mt-3">
+                    <label for="billageID">Billage ID:</label>
+                    <input type="text" class="form-control" id="billageID" value="${billageID}" readonly>
+                </div>
+                <p class="mt-3">Share this Billage ID with your friends, so they can join your Billage!</p>
+            </div>
+            <div class="col col-md-4 d-flex flex-column align-items-center">
+            <p>• Your friends can join your Billage by entering the Billage ID when joining a Billage.</p>
+            </div>
+        </div>
+    `;
+
+    createPopup(content);
 }

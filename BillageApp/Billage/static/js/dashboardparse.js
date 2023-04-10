@@ -1,4 +1,4 @@
-import { createBillageButtonHandler } from './dashboard.js';
+import { billageButtonsHandler } from './dashboard.js';
 
 const params = new URLSearchParams(window.location.search);
 const user_id = params.get('user_id');
@@ -272,7 +272,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
       const cardContent = `
       <p>You do not belong to a Billage yet, create or join one!</p>
       <button class ="btn btn-secondary mt-3 create-billage-button">Create Billage</button>
-      <div><button class ="btn btn-secondary mt-3">Join Billage</button></div>
+      <div><button class ="btn btn-secondary mt-3" id="join-billage-button">Join Billage</button></div>
       `;
 
       card.innerHTML = cardContent;
@@ -303,7 +303,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
       createCarousel(billages)
     }
 
-    createBillageButtonHandler();
+    billageButtonHandler();
 
     // Payment Details
     const paymentMethodContainer = document.getElementById("payment-methods");

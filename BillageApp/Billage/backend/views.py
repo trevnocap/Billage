@@ -132,4 +132,31 @@ class CreateJoinBillage(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def put(self, request):
+        serializer = JoinBillageSerializer(data=request.data)
+
+        if serializer.is_valid():
+            billage_id = serializer.validated_data['billage_id']
+            user_id = serializer.validated_data['user_id']
+
+            try:
+                billage = Billage.objects.get(pk=billage_id)
+                user = User.objects.get(pk=user_id)
+
+                for member in billage.billage_members.all():
+                    if member.id == user.id:
+                        return Response({"message": "User already is in the Billage"}, status=status.HTTP_400_BAD_REQUEST)
+
+                billage.billage_members.add(user)   
+                billage.save()
+
+
+                return Response({"message": "User successfully joined the Billage"}, status=status.HTTP_200_OK)
+
+            except Billage.DoesNotExist:
+                return Response({"error": "Billage not found"}, status=status.HTTP_404_NOT_FOUND)
+            except User.DoesNotExist:
+                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
