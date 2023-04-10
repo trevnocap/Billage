@@ -92,9 +92,10 @@ function handleSubmitButton(popupWrapper){
         const billageNameInputField = document.getElementById('billageName');
         let billageName = billageNameInputField.value;
 
-        if (billageName.length < 4 || billageName.length > 15){
-            errorHandler.textContent = 'Length must be between 4 and 15 characters!';
+        if (billageName.length < 5 || billageName.length > 20){
+            errorHandler.textContent = 'Length must be between 5 and 20 characters!';
             errorHandler.style.display = 'block';
+            submitButton.disabled = false;
         }else{
 
             let newBillage = {
@@ -128,6 +129,7 @@ function handleSubmitButton(popupWrapper){
                     errorHandler.textContent = 'An error occurred while creating your billage! Please try again later.'
                     errorHandler.style.display = 'block';
                     console.error('Error creating Billage:', response.status, response.statusText);
+                    submitButton.disabled = false;
                 }
             } catch (error) {
                 console.error('Error:', error);
