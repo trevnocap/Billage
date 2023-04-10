@@ -85,3 +85,27 @@ width: auto;
 .bill-container {
   overflow-y: auto;
 }
+
+.add-billage-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-logo {
+  height:60px;
+  width: auto;
+}
+
+.close-button {
+  height: 60px;
+  width: auto;
+  background: none;
+  border: none;
+  float: right;
+}
