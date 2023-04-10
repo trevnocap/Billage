@@ -1,6 +1,7 @@
 const mainElement = document.getElementById('main');
 const navbarElement = document.getElementById('navbar');
 let popupWrapper;
+let shouldReload = false;
 
 function createPopup(content) {
 
@@ -54,7 +55,9 @@ function closePopUp() {
     mainElement.style.pointerEvents = '';
     navbarElement.style.pointerEvents = '';
     popupWrapper.remove();
-    location.reload();
+    if (shouldReload){
+        location.reload();
+    }
 }
 
 
@@ -88,7 +91,7 @@ export function billageButtonsHandler() {
             `;
             createPopup(content)
 
-            handleSubmitButton();
+            handleCreateSubmission();
         });
     });
 
@@ -98,19 +101,16 @@ export function billageButtonsHandler() {
         mainElement.style.pointerEvents = 'none';
         navbarElement.style.pointerEvents = 'none';
 
-        const params = new URLSearchParams(window.location.search);
-        const user_id = params.get('user_id');
-
-        content = `
+        const content = `
             <div class="row mx-2">
                 <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
                     <h2>Join a Billage!</h2>
                     <div class="form-group mt-3">
-                        <label for="joinBillageID">Billage ID:</label>
-                        <input type="text" class="form-control" id="joinBillageID" placeholder="Enter Billage ID">
+                        <label for="join-billage-id">Billage ID:</label>
+                        <input type="text" class="form-control" id="join-billage-id" placeholder="Enter Billage ID">
                         <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
                     </div>
-                    <button class='btn btn-secondary mt-3 mb-5' id='join-billage-button'>Join Billage</button>
+                    <button class='btn btn-secondary mt-3 mb-5' id='submit-billage-id'>Join Billage</button>
                 </div>
                 <div class="col col-md-4 d-flex flex-column align-items-center">
                     <p>• Enter the Billage ID provided by your friend to join their Billage and start sharing bills!</p>
@@ -119,10 +119,12 @@ export function billageButtonsHandler() {
         `
 
         createPopup(content);
+
+        handleJoinSubmission();
     });
 }
 
-function handleSubmitButton(){
+function handleCreateSubmission(){
     const params = new URLSearchParams(window.location.search);
     const user_id = params.get('user_id');
 
@@ -178,9 +180,69 @@ function handleSubmitButton(){
     });
 }
 
-function showNewBillageData(responseData){
-    const billageID = responseData['billage_id'];
+function handleJoinSubmission(){
+    const params = new URLSearchParams(window.location.search);
+    const user_id = params.get('user_id');
 
+    const joinButton = document.getElementById('submit-billage-id');
+
+    joinButton.addEventListener('click', async () =>{
+        joinButton.disabled = true;
+
+        const errorHandler = document.getElementById('error-message');
+        const billageIDField = document.getElementById('join-billage-id');
+        let billageID = billageIDField.value;
+
+        if (billageID.length !== 8){
+            errorHandler.textContent = 'ID must be the correct format!';
+            errorHandler.style.display = 'block';
+            joinButton.disabled = false;
+        }else{
+
+            let newMember = {
+                'billage_id': billageID,
+                'user_id': user_id
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/create-join-billage/', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newMember)
+                });
+        
+                if (response.status === 200) {
+                    shouldReload = true;
+                    errorHandler.style.color = 'green';
+                    errorHandler.textContent = 'The Billage was successfully joined!'
+                    errorHandler.style.display = 'block';
+                    setTimeout(() => {
+                        closePopUp();
+                    }, 2500);   
+                }else if (response.status === 404) {
+                    errorHandler.textContent = 'Billage ID not found!'
+                    errorHandler.style.display = 'block';
+                    joinButton.disabled = false;
+                }else if (response.status === 400){
+                    errorHandler.textContent = 'You cannot join the same Billage twice!'
+                    errorHandler.style.display = 'block';
+                    joinButton.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+
+        }
+    
+    });
+}
+
+function showNewBillageData(responseData){
+    shouldReload = true;
+    const billageID = responseData['billage_id'];
+    
     const content = `
         <div class="row mx-2">
             <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
