@@ -23,7 +23,7 @@ export function createBillageButtonHandler() {
       const closeButton = document.createElement('button');
       closeButton.innerHTML = '❌'
       closeButton.classList.add('close-button');
-      closeButton.addEventListener('click', () => {
+      closeButton.addEventListener('click', () =>{
         mainElement.style.filter = '';
         navbarElement.style.filter = '';
         mainElement.style.pointerEvents = '';
@@ -31,7 +31,6 @@ export function createBillageButtonHandler() {
         popupWrapper.remove();
       });
 
-      
       const logo = document.createElement('img');
       logo.src = '/images/logo.png';
       logo.classList.add('popup-logo');
@@ -49,17 +48,18 @@ export function createBillageButtonHandler() {
       const contentRowContent = `
       <div class="row mx-2">
         <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
-          <h2>Create a New Billage!</h2>
-          <div class="form-group mt-3">
-            <label for="billageName">Billage Name:</label>
-            <input type="text" class="form-control" id="billageName" placeholder="Enter Billage Name">
-          </div>
-          <button class='btn btn-secondary mt-3 mb-5'>Create Billage</button>
+            <h2>Create a New Billage!</h2>
+            <div class="form-group mt-3">
+                <label for="billageName">Billage Name:</label>
+                <input type="text" class="form-control" id="billageName" placeholder="Enter Billage Name">
+                <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
+            </div>
+                <button class='btn btn-secondary mt-3 mb-5' id='submit-button'>Create Billage</button>
+            </div>
+            <div class="col col-md-4 d-flex flex-column align-items-center">
+                <p>• Creating a Billage will allow you to add members and link bills which we will spilt up for you! </p>
+            </div>
         </div>
-        <div class="col col-md-4 d-flex flex-column align-items-center">
-          <p>• Creating a Billage will allow you to add members and link bills which we will spilt up for you! </p>
-        </div>
-      </div>
     `;
     
 
@@ -73,6 +73,69 @@ export function createBillageButtonHandler() {
 
       popupWrapper.appendChild(popUp);
       document.body.appendChild(popupWrapper);
+
+      handleSubmitButton(popupWrapper);
     });
   });
+}
+
+function handleSubmitButton(popupWrapper){
+    const params = new URLSearchParams(window.location.search);
+    const user_id = params.get('user_id');
+
+    const submitButton = document.getElementById('submit-button');
+    
+    submitButton.addEventListener('click', async () =>{
+        submitButton.disabled = true;
+
+        const errorHandler = document.getElementById('error-message');
+        const billageNameInputField = document.getElementById('billageName');
+        let billageName = billageNameInputField.value;
+
+        if (billageName.length < 4 || billageName.length > 15){
+            errorHandler.textContent = 'Length must be between 4 and 15 characters!';
+            errorHandler.style.display = 'block';
+        }else{
+
+            let newBillage = {
+                'billage_name': billageName,
+                'billage_members' : [
+                    user_id
+                ]
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/create-join-billage/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newBillage)
+                });
+        
+                if (response.status === 201) {
+                    errorHandler.style.display = 'none';
+                    console.log('Billage created successfully!');
+                    const responseData = await response.json();
+                    console.log('Response data:', responseData);
+                    mainElement.style.filter = '';
+                    navbarElement.style.filter = '';
+                    mainElement.style.pointerEvents = '';
+                    navbarElement.style.pointerEvents = '';
+                    popupWrapper.remove();
+                    location.reload();
+                } else {
+                    errorHandler.textContent = 'An error occurred while creating your billage! Please try again later.'
+                    errorHandler.style.display = 'block';
+                    console.error('Error creating Billage:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                submitButton.disabled = false;
+            }
+
+        }
+    
+    });
 }
