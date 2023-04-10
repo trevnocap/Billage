@@ -1,7 +1,11 @@
 import { billageButtonsHandler } from './dashboard.js';
+import { parseJwt } from "./helperFunctions.js";
 
-const params = new URLSearchParams(window.location.search);
-const user_id = params.get('user_id');
+const accessToken = localStorage.getItem('access_token');
+
+const decodedToken = parseJwt(accessToken);
+
+const user_id = decodedToken.user_id;
 
 const mainElement = document.getElementById('main');
 const navbarElement = document.getElementById('navbar');

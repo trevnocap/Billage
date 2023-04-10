@@ -74,7 +74,9 @@ class DashboardView(APIView):
     
     
     ### Functionality APIs
-    
+
+
+    """
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
     authentication_classes = [TokenAuthentication]
@@ -92,7 +94,7 @@ class LoginView(APIView):
             else:
                 return Response({'success': False, 'error': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
         else:
-            return Response({'success': False, 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success': False, 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)"""
         
 
 class RegisterView(APIView):

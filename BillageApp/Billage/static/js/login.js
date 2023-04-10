@@ -1,3 +1,7 @@
+import { parseJwt, checkAccessTokenAndRedirectToLogin } from "./helperFunctions.js";
+
+checkAccessTokenAndRedirectToLogin();
+
 const loginForm = document.getElementById('login-form');
 
 loginForm.addEventListener('submit', (event) => {
@@ -8,25 +12,28 @@ loginForm.addEventListener('submit', (event) => {
 });
 
 async function login(username, password) {
-    const response = await fetch('http://127.0.0.1:8000/api/login/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username, password })
-    });
-  
-    if (response.ok) {
-      // redirect the user to a new page
-      const data = await response.json();
-      user_id = data.id;
+  const response = await fetch("http://127.0.0.1:8000/api/auth/jwt/create/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  });
 
-      window.location.href = `http://127.0.0.1:8000/dashboard/?user_id=${user_id}`;
-      
-    } else {
-      // handle the error
-      const errorMessage = document.querySelector('.loginfailed');
-      errorMessage.textContent = 'Login failed. Please try again.'
-    }
+  if (response.ok) {
+    const data = await response.json();
+    localStorage.setItem("access_token", data.access);
+    localStorage.setItem("refresh_token", data.refresh);
+
+    const decodedToken = parseJwt(data.access);
+    const user_id = decodedToken.user_id;
+    console.log(user_id);
+
+    window.location.href = `http://127.0.0.1:8000/dashboard/`;
+  } else {
+    const errorMessage = document.querySelector(".loginfailed");
+    errorMessage.textContent = "Login failed. Please try again.";
   }
+}
+
 

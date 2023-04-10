@@ -1,3 +1,9 @@
+import { parseJwt, checkAccessTokenAndRedirectToLogin } from "./helperFunctions.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+    checkAccessTokenAndRedirectToLogin();
+});
+
 const mainElement = document.getElementById('main');
 const navbarElement = document.getElementById('navbar');
 let popupWrapper;
@@ -127,8 +133,9 @@ export function billageButtonsHandler() {
 }
 
 function handleCreateSubmission(){
-    const params = new URLSearchParams(window.location.search);
-    const user_id = params.get('user_id');
+    const accessToken = localStorage.getItem('access_token');
+    const decodedToken = parseJwt(accessToken);
+    const user_id = decodedToken.user_id;
 
     const submitButton = document.getElementById('submit-button');
     
@@ -183,8 +190,9 @@ function handleCreateSubmission(){
 }
 
 function handleJoinSubmission(){
-    const params = new URLSearchParams(window.location.search);
-    const user_id = params.get('user_id');
+    const accessToken = localStorage.getItem('access_token');
+    const decodedToken = parseJwt(accessToken);
+    const user_id = decodedToken.user_id;
 
     const joinButton = document.getElementById('submit-billage-id');
 

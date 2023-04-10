@@ -9,11 +9,7 @@ from django.http import JsonResponse, HttpResponse
 # Create your views here.
 
 def dashboard_view(request):
-    user_id = request.GET.get('user_id')
-    if user_id and User.objects.filter(id=user_id).exists():
-        return render(request, 'frontend/dashboard.html')
-    else:
-        return HttpResponse("Invalid User ID")
+    return render(request, 'frontend/dashboard.html')
 
 def login_view(request):
     return render(request, 'frontend/login.html')
