@@ -39,7 +39,7 @@ function createPopup(content) {
     contentRow.classList.add('row');
 
     const contentRowContentDiv = document.createElement('div');
-    contentRowContentDiv.classList.add('col-md-12', 'col-lg-12', 'col-sm-12', 'mt-3', /*'d-flex' ,'justify-content-center', 'align-items-center'*/);
+    contentRowContentDiv.classList.add('col-md-12', 'col-lg-12', 'col-sm-12', 'mt-3',);
     
     contentRowContentDiv.innerHTML = content;
     contentRow.appendChild(contentRowContentDiv);
@@ -63,7 +63,7 @@ function closePopUp() {
 
 export function billageButtonsHandler() {
     const createBillageButtons = document.querySelectorAll('.create-billage-button');
-    const joinBillageButton = document.getElementById('join-billage-button');
+    const joinBillageButtons = document.querySelectorAll('.join-billage-button');
 
     createBillageButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -95,32 +95,34 @@ export function billageButtonsHandler() {
         });
     });
 
-    joinBillageButton.addEventListener('click', () => {
-        mainElement.style.filter = 'blur(7px)';
-        navbarElement.style.filter = 'blur(7px)';
-        mainElement.style.pointerEvents = 'none';
-        navbarElement.style.pointerEvents = 'none';
+    joinBillageButtons.forEach(button => {        
+        button.addEventListener('click', () => {
+            mainElement.style.filter = 'blur(7px)';
+            navbarElement.style.filter = 'blur(7px)';
+            mainElement.style.pointerEvents = 'none';
+            navbarElement.style.pointerEvents = 'none';
 
-        const content = `
-            <div class="row mx-2">
-                <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
-                    <h2>Join a Billage!</h2>
-                    <div class="form-group mt-3">
-                        <label for="join-billage-id">Billage ID:</label>
-                        <input type="text" class="form-control" id="join-billage-id" placeholder="Enter Billage ID">
-                        <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
+            const content = `
+                <div class="row mx-2">
+                    <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
+                        <h2>Join a Billage!</h2>
+                        <div class="form-group mt-3">
+                            <label for="join-billage-id">Billage ID:</label>
+                            <input type="text" class="form-control" id="join-billage-id" placeholder="Enter Billage ID">
+                            <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
+                        </div>
+                        <button class='btn btn-secondary mt-3 mb-5' id='submit-billage-id'>Join Billage</button>
                     </div>
-                    <button class='btn btn-secondary mt-3 mb-5' id='submit-billage-id'>Join Billage</button>
+                    <div class="col col-md-4 d-flex flex-column align-items-center">
+                        <p>• Enter the Billage ID provided by your friend to join their Billage and start sharing bills!</p>
+                    </div>
                 </div>
-                <div class="col col-md-4 d-flex flex-column align-items-center">
-                    <p>• Enter the Billage ID provided by your friend to join their Billage and start sharing bills!</p>
-                </div>
-            </div>
-        `
+            `
 
-        createPopup(content);
+            createPopup(content);
 
-        handleJoinSubmission();
+            handleJoinSubmission();
+        });
     });
 }
 
@@ -261,3 +263,5 @@ function showNewBillageData(responseData){
 
     createPopup(content);
 }
+
+billageButtonsHandler();

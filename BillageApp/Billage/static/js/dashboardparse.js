@@ -272,12 +272,14 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
       const cardContent = `
       <p>You do not belong to a Billage yet, create or join one!</p>
       <button class ="btn btn-secondary mt-3 create-billage-button">Create Billage</button>
-      <div><button class ="btn btn-secondary mt-3" id="join-billage-button">Join Billage</button></div>
+      <div><button class ="btn btn-secondary mt-3 join-billage-button">Join Billage</button></div>
       `;
 
       card.innerHTML = cardContent;
 
       billageContainer.append(card)
+
+      billageButtonsHandler();
 
       
     }else if (billages.length <= 3) {
@@ -302,8 +304,6 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     }else {
       createCarousel(billages)
     }
-
-    billageButtonsHandler();
 
     // Payment Details
     const paymentMethodContainer = document.getElementById("payment-methods");
