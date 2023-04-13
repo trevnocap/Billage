@@ -130,9 +130,17 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # HASHING
 from django.contrib.auth.hashers import Argon2PasswordHasher
+from django.contrib.auth.hashers import PBKDF2PasswordHasher
+from django.contrib.auth.hashers import PBKDF2SHA1PasswordHasher
+from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
+from django.contrib.auth.hashers import BCryptPasswordHasher
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
 ]
 
 

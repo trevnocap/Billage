@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 import os
 import django
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'BillageApp.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'BillageApp.Billage.Billage.settings')
 django.setup()
 
 class Command(BaseCommand):
