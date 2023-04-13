@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <button class='btn btn-primary w-100 mb-5 answer-button' id='yes-button'>Yes</button>
+                    <button class='btn btn-primary w-100 mb-5 mr-2 answer-button' id='yes-button'>Yes</button>
                     <button class='btn btn-primary w-100 mb-5 answer-button'>No</button>
                 </div>
             </div>
@@ -123,7 +123,16 @@ async function joinBillage(linkUUID, userID) {
             setTimeout(() => {
                 window.location.href = 'http://127.0.0.1:8000/dashboard'
               }, 3000); 
-        } else {
+        }else if(response.status === 410){
+            errorHandler.textContent = 'This shareable link is expired!'
+            errorHandler.style.display = 'block';
+            buttons.forEach(button => {
+                button.disabled = true;
+            });
+            setTimeout(() => {
+                window.location.href = 'http://127.0.0.1:8000/dashboard'
+              }, 3000);
+        }else{
             console.error(`Error: ${response.status} ${response.statusText}`);
         }
     } catch (error) {
