@@ -14,6 +14,7 @@ export function parseJwt (token) {
   }
 
 export function checkAccessTokenAndRedirectToLogin() {
+  
   const accessToken = localStorage.getItem("access_token");
 
   if (!accessToken) {

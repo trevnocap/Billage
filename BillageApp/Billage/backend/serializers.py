@@ -101,3 +101,10 @@ class CreateBillageSerializer(serializers.ModelSerializer):
 class JoinBillageSerializer(serializers.Serializer):
     billage_id = serializers.CharField()
     user_id = serializers.IntegerField()
+    
+from .models import ShareableLink
+
+class ShareableLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShareableLink
+        fields = ('billage', 'uuid', 'expires_at')

@@ -3,6 +3,7 @@
         
 import random, string, uuid
 
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator, MinLengthValidator, MaxLengthValidator
@@ -181,3 +182,16 @@ class UserBillDetailsHistory(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.linked_bill.billage_link.billage_name} - {self.linked_bill.bill_provider_name} - {self.bill_due_date}"
+
+
+from django.db import models
+from django.utils import timezone
+import uuid
+
+class ShareableLink(models.Model):
+    billage = models.ForeignKey(Billage, on_delete=models.CASCADE)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    expires_at = models.DateTimeField()
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at

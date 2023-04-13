@@ -1,14 +1,8 @@
-from django.shortcuts import render
+from datetime import timedelta
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
-from rest_framework.authentication import TokenAuthentication
-
-from django.contrib.auth import authenticate, login
-from django.core.exceptions import ObjectDoesNotExist
-
 
 from .serializers import *
 
@@ -162,3 +156,26 @@ class CreateJoinBillage(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+from rest_framework.permissions import IsAuthenticated
+from .serializers import ShareableLinkSerializer
+
+class CreateShareableLink(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, billage_id):
+        billage = Billage.objects.get(pk=billage_id)
+
+        if request.user not in billage.billage_members.all():
+            return Response({'detail': 'You are not a member of this Billage.'}, status=status.HTTP_403_FORBIDDEN)
+
+        link = ShareableLink(billage=billage, expires_at=timezone.now() + timedelta(minutes=15))
+        link.save()
+        serializer = ShareableLinkSerializer(link)
+
+        # Update the serialized data with the full link using hardcoded base URL
+        serialized_data = serializer.data
+        serialized_data['shareable_link'] = f"http://127.0.0.1:8000/invite/{link.uuid}/"
+
+        return Response(serialized_data)
+

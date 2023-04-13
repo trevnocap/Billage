@@ -254,22 +254,62 @@ function showNewBillageData(responseData){
     const billageID = responseData['billage_id'];
     
     const content = `
-        <div class="row mx-2">
-            <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
-                <h2>Billage Successfully Created!</h2>
-                <div class="form-group mt-3">
-                    <label for="billageID">Billage ID:</label>
-                    <input type="text" class="form-control" id="billageID" value="${billageID}" readonly>
-                </div>
-                <p class="mt-3">Share this Billage ID with your friends, so they can join your Billage!</p>
+    <div class="row mx-2">
+        <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
+            <h2>Billage Successfully Created!</h2>
+            <div class="form-group mt-3">
+                <label for="billageID">Billage ID:</label>
+                <input type="text" class="form-control" id="billageID" value="${billageID}" readonly>
             </div>
-            <div class="col col-md-4 d-flex flex-column align-items-center">
-            <p>• Your friends can join your Billage by entering the Billage ID when joining a Billage.</p>
-            </div>
+            <p class="mt-3">Share this Billage ID with your friends, so they can join your Billage!</p>
         </div>
+        <div class="col col-md-4 d-flex flex-column align-items-center">
+            <p>• Your friends can join your Billage by entering the Billage ID when joining a Billage.</p>
+            <button class="btn btn-outline-secondary mt-3" id="on-create-share-button"><i class="fas fa-share-alt"></i> Share</button>
+        </div>
+    </div>
     `;
 
     createPopup(content);
+
+    handleShareButton(billageID);
+}
+
+function handleShareButton(billageID){
+    const shareButton = document.getElementById('on-create-share-button');
+
+    shareButton.addEventListener('click', async () => {
+        console.log('Share button clicked');
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(`/api/create_shareable_link/${billageID}/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            credentials: 'include',  // Include user's credentials (cookies) in the request
+        });
+        if (response.ok){
+            const data = await response.json();
+            const shareLink = data.shareable_link;
+
+            const content = `
+            <div class="share-popup">
+                <p>Share this link with your friends to join your Billage:</p>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="share-link" value="${shareLink}" readonly>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="copy-link-button">Copy</button>
+                    </div>
+                </div>
+                <p>This link will expire in 15 minutes.</p>
+            </div>
+            `;
+
+            createPopup(content);
+        }
+
+    });
 }
 
 billageButtonsHandler();
