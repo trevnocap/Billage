@@ -236,7 +236,7 @@ function handleJoinSubmission(){
                     errorHandler.style.display = 'block';
                     joinButton.disabled = false;
                 }else if (response.status === 400){
-                    errorHandler.textContent = 'You cannot join the same Billage twice!'
+                    errorHandler.textContent = 'You cannot join a Billage that you are already in!'
                     errorHandler.style.display = 'block';
                     joinButton.disabled = false;
                 }

@@ -380,7 +380,21 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
   })
   .catch(error => {
     console.error('Error:', error);
+    const errorElement = document.createElement('p');
+    errorElement.textContent = "There was a problem loading your account data. Please clear your cookies and try again. If the problem persists, please contact us.";
+    errorElement.style.color = 'red';
+    errorElement.style.fontSize = '20px';
 
+    // Hide all other elements on the page
+    mainElement.style.display = 'none';
+    navbarElement.style.display = 'none';
+    loadingIconElement.style.display = 'none';
+
+    // Display the error message
+    const errorMessageContainer = document.createElement('div');
+    errorMessageContainer.classList.add('text-center', 'mt-5');
+    errorMessageContainer.appendChild(errorElement);
+    document.body.appendChild(errorMessageContainer);
   })
   
   .finally(()=> {
