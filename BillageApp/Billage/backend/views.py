@@ -103,9 +103,9 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
-class CreateJoinBillage(APIView):
+class CreateBillage(APIView):
     permission_classes = [permissions.AllowAny]
-    
+
     def post(self, request):
         serializer = CreateBillageSerializer(data=request.data)
 
@@ -127,35 +127,50 @@ class CreateJoinBillage(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
+class JoinBillage(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def put(self, request):
         serializer = JoinBillageSerializer(data=request.data)
 
         if serializer.is_valid():
-            billage_id = serializer.validated_data['billage_id']
             user_id = serializer.validated_data['user_id']
 
             try:
-                billage = Billage.objects.get(pk=billage_id)
+                if 'link_uuid' in serializer.validated_data:
+                    link_uuid = serializer.validated_data['link_uuid']
+                    link = ShareableLink.objects.get(uuid=link_uuid)
+                    if link.expires_at < timezone.now():
+                        link.delete()
+                        return Response({'detail': 'Link has expired.'}, status=status.HTTP_410_GONE)
+
+                    billage = link.billage
+                elif 'billage_id' in serializer.validated_data:
+                    billage_id = serializer.validated_data['billage_id']
+                    billage = Billage.objects.get(pk=billage_id)
+
                 user = User.objects.get(pk=user_id)
 
                 for member in billage.billage_members.all():
                     if member.id == user.id:
                         return Response({"message": "User already is in the Billage"}, status=status.HTTP_400_BAD_REQUEST)
 
-                billage.billage_members.add(user)   
+                billage.billage_members.add(user)
                 billage.save()
-
 
                 return Response({"message": "User successfully joined the Billage"}, status=status.HTTP_200_OK)
 
+            except ShareableLink.DoesNotExist:
+                return Response({"error": "Invalid link."}, status=status.HTTP_404_NOT_FOUND)
             except Billage.DoesNotExist:
                 return Response({"error": "Billage not found"}, status=status.HTTP_404_NOT_FOUND)
             except User.DoesNotExist:
                 return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ShareableLinkSerializer
@@ -169,7 +184,7 @@ class CreateShareableLink(APIView):
         if request.user not in billage.billage_members.all():
             return Response({'detail': 'You are not a member of this Billage.'}, status=status.HTTP_403_FORBIDDEN)
 
-        link = ShareableLink(billage=billage, expires_at=timezone.now() + timedelta(minutes=15))
+        link = ShareableLink(billage=billage, expires_at=timezone.now() + timedelta(hours=1))
         link.save()
         serializer = ShareableLinkSerializer(link)
 

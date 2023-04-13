@@ -20,3 +20,9 @@ def logout_view(request):
 
 def register_view(request):
     return render(request, 'frontend/register.html')
+
+from django.views import View
+
+class InviteView(View):
+    def get(self, request, link_uuid):
+        return render(request, 'frontend/invite.html', {'link_uuid': link_uuid})

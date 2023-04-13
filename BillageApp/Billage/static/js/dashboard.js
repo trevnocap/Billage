@@ -160,7 +160,7 @@ function handleCreateSubmission(){
             }
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/create-join-billage/', {
+                const response = await fetch('http://127.0.0.1:8000/api/create-billage/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -215,7 +215,7 @@ function handleJoinSubmission(){
             }
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/create-join-billage/', {
+                const response = await fetch('http://127.0.0.1:8000/api/join-billage/', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -302,14 +302,75 @@ function handleShareButton(billageID){
                         <button class="btn btn-outline-secondary" type="button" id="copy-link-button">Copy</button>
                     </div>
                 </div>
-                <p>This link will expire in 15 minutes.</p>
+                <p>This link will expire in 1 hour.</p>
             </div>
+            <script>
+                document.getElementById('copy-link-button').addEventListener('click', function () {
+                    // Get the input field that contains the text you want to copy
+                    const shareLinkInput = document.getElementById('share-link');
+
+                    // Select the text in the input field
+                    shareLinkInput.select();
+                    shareLinkInput.setSelectionRange(0, 99999); // For mobile devices
+
+                    // Copy the selected text to the clipboard
+                    navigator.clipboard.writeText(shareLinkInput.value)
+                        .then(() => {
+                            document.getElementById('copy-link-button').textContent = 'Copied!';
+                        })
+                        .catch((err) => {
+                            console.error('Could not copy text to clipboard', err);
+                        });
+                });
+            </script>
             `;
 
             createPopup(content);
+            const script = document.createElement('script');
+            script.textContent = `
+                document.getElementById('copy-link-button').addEventListener('click', function () {
+                    const shareLinkInput = document.getElementById('share-link');
+                    shareLinkInput.select();
+                    shareLinkInput.setSelectionRange(0, 99999);
+                    navigator.clipboard.writeText(shareLinkInput.value)
+                        .then(() => {
+                            document.getElementById('copy-link-button').textContent = 'Copied!';
+                        })
+                        .catch((err) => {
+                            console.error('Could not copy text to clipboard', err);
+                        });
+                });
+            `;
+            popupWrapper.appendChild(script);
+
         }
 
     });
 }
+ 
+function signOut() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refrsh_token');
+    // Clear the cache
+    if ('caches' in window) {
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            return caches.delete(cacheName);
+          })
+        );
+      });
+    }
+  
+    window.location.href = 'http://127.0.0.1:8000/'
+}
+
+function signOutButtonHandler(){
+    const signOutButton = document.getElementById('sign-out-button');
+    signOutButton.addEventListener('click', () => {
+        signOut();
+    });
+}
 
 billageButtonsHandler();
+signOutButtonHandler();

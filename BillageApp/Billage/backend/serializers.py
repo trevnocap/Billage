@@ -99,8 +99,14 @@ class CreateBillageSerializer(serializers.ModelSerializer):
         exclude = ('date_created', 'billage_image',)
 
 class JoinBillageSerializer(serializers.Serializer):
-    billage_id = serializers.CharField()
+    link_uuid = serializers.UUIDField(required=False)
+    billage_id = serializers.CharField(required=False)
     user_id = serializers.IntegerField()
+
+    def validate(self, data):
+        if 'link_uuid' not in data and 'billage_id' not in data:
+            raise serializers.ValidationError("Either link_uuid or billage_id must be provided.")
+        return data
     
 from .models import ShareableLink
 
