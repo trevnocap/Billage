@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const decodedToken = parseJwt(access_token);
     const userID = decodedToken.user_id; 
     const linkUUID = extractUUIDFromURL();
-    console.log(linkUUID);
 
     const content = `
         <div class="row mx-2">
