@@ -231,7 +231,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
           <img src="${billage.billage_image}" alt="${billage.billage_name}" class="billage-icon" />
           <h5>${billage.billage_name}</h5>
           <p>${billage.billage_members.length} members</p>
-          <button class="btn btn-primary mt-2">Manage Billage</button>
+          <a class="btn btn-primary mt-2" href = "http://127.0.0.1:8000/manage-billage/?billage_id=${billage.billage_id}">Manage Billage</a>
           `;
     
           card.innerHTML = cardContent;
@@ -297,7 +297,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         <img src="${billage.billage_image}" alt="${billage.billage_name}" class= "billage-icon" />
         <h5>${billage.billage_name}</h5>
         <p>${billage.billage_members.length} members</p>
-        <button class ="btn btn-primary mt-3">Manage Billage</button>
+        <a class="btn btn-primary mt-2" href = "http://127.0.0.1:8000/manage-billage/?billage_id=${billage.billage_id}">Manage Billage</a>
         `;
 
         card.innerHTML = cardContent;

@@ -24,7 +24,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email']
         
         
         
@@ -114,3 +114,24 @@ class ShareableLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShareableLink
         fields = ('billage', 'uuid', 'expires_at')
+
+#manage billage serializers
+
+class ManageViewBillageSerializer(serializers.ModelSerializer):
+    billage_members = UserSerializer(many=True)
+    
+    class Meta:
+        model = Billage
+        fields = '__all__'
+        
+class ManageViewLinkedBillSerializer(LinkedBillSerializer):
+    class Meta(LinkedBillSerializer.Meta):
+        exclude = ('date_created', 'billage_link',)
+        
+class ManageViewBillageBillSerializer(BillageBillSerializer):
+    linked_bill = serializers.CharField(source = 'linked_bill.bill_provider_name')
+    bill_type = serializers.CharField(source = 'linked_bill.bill_type')
+    
+    class Meta(BillageBillSerializer.Meta):
+        exclude = ('date_created',)
+        

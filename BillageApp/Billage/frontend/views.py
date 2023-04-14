@@ -21,6 +21,9 @@ def logout_view(request):
 def register_view(request):
     return render(request, 'frontend/register.html')
 
+def manage_billage_view(request):
+    return render(request, 'frontend/manage-billage.html')
+
 from django.views import View
 
 class InviteView(View):

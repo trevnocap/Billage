@@ -48,6 +48,20 @@ body {
     border-radius: 10px;
 }
 
+.btn-warning {
+    font-size: 12px ;
+    background-color: #dc4444;
+    border: #dc4444;
+    border-radius: 10px;
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #3b3d3a !important;
+    border: #3b3d3a;
+    border-radius: 10px;
+}
+
 .btn-danger {
     background-color: #575e57;
     border: #575e57;
@@ -82,3 +96,10 @@ body {
     outline: none;
     box-shadow: none;
 }
+
+.border-container {
+    border-color: #b1c5ad !important;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 24px;
+  }

@@ -45,26 +45,55 @@ class DashboardView(APIView):
         active_bills_to_display = active_bills_query.order_by('bill_due_date')[:max_bill_display_count]
         serializer = UserActiveBillDueSerializer(active_bills_to_display, many=True)
         active_bills_data = {"active_bills": serializer.data}
-        
-        #bill history
-        bill_history_display_count = max_bill_display_count - active_bills_to_display.count()
-        bill_history_query = UserBillDetailsHistory.objects.filter(user = user_id)
-        bill_history_to_display = bill_history_query.order_by('date_closed')[:bill_history_display_count]
-        serializer = UserBillDetailsHistorySerliazer(bill_history_to_display, many=True)
-        bill_history_data = {"bill_history": serializer.data}
-        
+
 
         #response
         response_data = {}
         response_data.update(user_data)
         response_data.update(billage_data)
         response_data.update(active_bills_data)
-        response_data.update(bill_history_data)
         response_data.update(payment_methods_data)
         
         
         return Response(response_data)
     
+    
+class ManageBillageDashboardView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    def get(self, request, billage_id):
+        billage = Billage.objects.get(pk=billage_id)
+        print(request.user)
+        
+        '''if request.user not in billage.billage_members.all():
+            return Response({'detail': 'You are not a member of this Billage.'}, status=status.HTTP_403_FORBIDDEN)'''
+            
+        serializer = ManageViewBillageSerializer(billage)
+        billage_data = {'billage': serializer.data}
+        
+        
+        #linked Bills
+        linked_bills = LinkedBill.objects.filter(billage_link = billage_id)
+        serializer = ManageViewLinkedBillSerializer(linked_bills, many= True)
+        linked_bill_data = {'linked_bills': serializer.data}
+        
+        #billage bills
+        max_bill_display_count = 7
+        billage_bills_query = BillageBill.objects.filter(linked_bill__billage_link = billage_id)
+        billage_bills_to_display = billage_bills_query.order_by('-bill_due_date')[:max_bill_display_count]
+        serializer = ManageViewBillageBillSerializer(billage_bills_to_display, many=True)
+        billage_bill_data = {'billage_bills': serializer.data}
+        
+        #response
+        response_data = {}
+        response_data.update(billage_data)
+        response_data.update(linked_bill_data)
+        response_data.update(billage_bill_data)
+        
+        return Response(response_data)
+        
+        
+
     
     
     ### Functionality APIs
@@ -193,4 +222,5 @@ class CreateShareableLink(APIView):
         serialized_data['shareable_link'] = f"http://127.0.0.1:8000/invite/{link.uuid}/"
 
         return Response(serialized_data)
+    
 

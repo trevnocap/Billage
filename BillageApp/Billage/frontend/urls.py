@@ -7,5 +7,6 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('dashboard/', dashboard_view, name='dashboard'),
     path('register/', register_view, name='register'),
+    path('manage-billage/', manage_billage_view, name='register'),
     path('invite/<str:link_uuid>/', InviteView.as_view(), name='invite'),
 ]

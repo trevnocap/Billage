@@ -122,11 +122,18 @@ class LinkedBill(models.Model):
 
 #Defines a linked bill in the active billing cycle     
 class BillageBill(models.Model):
+    BILL_STATUSES = (
+        ('paid', 'paid'),
+        ('pending payment', 'pending payment'),
+        ('failed payment', 'failed payment'),
+        ('canceled', 'canceled')
+    )
         
     bill_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     linked_bill = models.ForeignKey(LinkedBill, on_delete=models.CASCADE)
     bill_due_amount = models.DecimalField(max_digits = 7, decimal_places = 2, default=0)
     bill_due_date = models.DateField(auto_now=False)
+    bill_status = models.CharField(max_length=20, choices = BILL_STATUSES, default= 'pending payment')
     date_created = models.DateField(auto_now_add=True)
     
     def __str__(self):

@@ -53,13 +53,6 @@ width: auto;
   right: 10px;
 }
 
-.border-container {
-  border-color: #b1c5ad !important;
-  border-width: 2px;
-  border-style: solid;
-  border-radius: 24px;
-}
-
 #bill-activity {
   overflow-x: auto;
   justify-content: center;
