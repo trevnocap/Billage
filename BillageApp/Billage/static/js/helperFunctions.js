@@ -100,6 +100,7 @@ export class Popup {
     if (settings === undefined) {
       this.settings = {
         closeButton: true,
+        logo: true,
       };
     } else {
       this.settings = settings;
@@ -110,7 +111,7 @@ export class Popup {
 
   createPopup(content) {
     if (this.popupWrapper) {
-        this.popupWrapper.remove();
+      this.popupWrapper.remove();
     }
 
     this.popupWrapper = document.createElement('div');
@@ -132,14 +133,16 @@ export class Popup {
       closeButton.classList.add('close-button');
       closeButton.addEventListener('click', this.closePopUp);
     }
-
-    const logo = document.createElement('img');
-    logo.src = '/images/logo.png';
-    logo.classList.add('popup-logo');
-    topRowContent.appendChild(logo);
+    if (this.settings.logo){
+      const logo = document.createElement('img');
+      logo.src = '/images/logo.png';
+      logo.classList.add('popup-logo');
+      topRowContent.appendChild(logo);
+    }
     if (closeButton){
       topRowContent.appendChild(closeButton);
     }
+    
     topRow.appendChild(topRowContent);
     popUp.appendChild(topRow);
 
@@ -174,4 +177,9 @@ export class Popup {
     this.createPopup(content);
   }
 
+}
+
+export function getQueryParam(paramName) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(paramName);
 }

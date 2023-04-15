@@ -1,17 +1,14 @@
-import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt } from "./helperFunctions.js"
+import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt, getQueryParam } from "./helperFunctions.js"
+import { handleButtons } from "./buttonHandling/manage_billage_handler.js";
 
-const accessToken = localStorage.getItem('access_token');
-const decodedToken = parseJwt(accessToken);
+
+const token = localStorage.getItem('access_token');
+const decodedToken = parseJwt(token);
 const user_id = decodedToken.user_id;
 
 const mainElement = document.getElementById('main');
 const navbarElement = document.getElementById('navbar');
 const loadingIconElement = document.getElementById('loading-icon');
-
-function getQueryParam(paramName) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(paramName);
-}
 
 const billageId = getQueryParam('billage_id');
 
@@ -20,18 +17,30 @@ mainElement.style.display = 'none';
 navbarElement.style.display = 'none';
 loadingIconElement.style.display = 'flex';
 
-fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`)
-  .then(response => response.json())
-  .then(data => {
+fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  }
+}).then(response => {
+  if (response.status === 403){
+    window.location.href = 'http://127.0.0.1:8000/dashboard';
+  }else{
+    return response.json();
+  }
+}).then(data => {
+    let userIdIsAdmin = false;
     // Billage Details;
     const billageDetailsContainer = document.getElementById('billage-details');
     const billageName = data.billage.billage_name;
     const billageImage = data.billage.billage_image;
     const billageMembers = data.billage.billage_members;
-    const billageAdmins = data.billage.admins;
+    const billageAdmins = data.billage.billage_admins;
 
-
-
+    for(const id of billageAdmins) {
+      userIdIsAdmin = true;
+    }
     const mainRow = document.createElement('div');
     mainRow.classList.add('row');
 
@@ -89,20 +98,32 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`)
       removeButtonColumn.classList.add('col-lg-6', 'col-md-6', 'col-sm-6');
   
       const removeButton = document.createElement('button');
-      removeButton.classList.add('btn', 'btn-warning', 'btn-sm');
+      removeButton.classList.add('btn', 'btn-warning', 'btn-sm', 'remove-buttons');
+
+      const promoteButton = document.createElement('button');
+      promoteButton.classList.add('btn', 'btn-success', 'btn-sm', 'promote-buttons');
+
       if (member.id === user_id){
         removeButton.textContent = 'Leave';
+        removeButton.id = member.id;
         removeButtonColumn.appendChild(removeButton);
       }else {
-        console.log(billageAdmins);
-        for (const id of billageAdmins){
-          if (id.admin === user_id){
-            removeButton.textContent = 'Remove';
-            removeButtonColumn.appendChild(removeButton);
+        if (userIdIsAdmin){
+          for (const id of billageAdmins){
+            if (id !== member.id){
+              promoteButton.textContent = 'Make Admin';
+              promoteButton.classList.add('mr-1')
+              promoteButton.id = member.id;
+              removeButtonColumn.appendChild(promoteButton);
+            }
           }
+          
+          removeButton.textContent = 'Remove';
+          removeButton.id = member.id;
+          removeButtonColumn.appendChild(removeButton);
         }
       }
-  
+
       memberRow.appendChild(memberNameColumn);
       memberRow.appendChild(removeButtonColumn);
       membersColumn.appendChild(memberRow);
@@ -195,7 +216,7 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`)
 
       const cardContent = `
       <p>This Billage does not have any linked bills yet, add one!</p>
-      <button class ="btn btn-primary mt-3 create-billage-button">Add Bill</button>
+      <button class ="btn btn-primary btn-sm mt-3 create-billage-button">Add Bill</button>
       `;
 
       card.innerHTML = cardContent;
@@ -287,7 +308,7 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`)
       footerCol.colSpan = 4;
       
       const viewAllBillsButton = document.createElement('button');
-      viewAllBillsButton.classList.add('btn', 'btn-info');
+      viewAllBillsButton.classList.add('btn', 'btn-info', 'btn-sm',);
       viewAllBillsButton.textContent = 'View All Bills';
     
       footerCol.appendChild(viewAllBillsButton);
@@ -318,13 +339,12 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`)
       createBillActivityTable(billage_bills);
     }
 
+    handleButtons();
 
   })
 
-  
   .finally(()=> {
     mainElement.style.display = 'flex';
     navbarElement.style.display = 'flex';
     loadingIconElement.style.display = 'none';
   });
-

@@ -1,8 +1,8 @@
 from datetime import timedelta
-from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import *
 
@@ -59,14 +59,14 @@ class DashboardView(APIView):
     
     
 class ManageBillageDashboardView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = (IsAuthenticated,)
     
     def get(self, request, billage_id):
         billage = Billage.objects.get(pk=billage_id)
-        print(request.user)
+
         
-        '''if request.user not in billage.billage_members.all():
-            return Response({'detail': 'You are not a member of this Billage.'}, status=status.HTTP_403_FORBIDDEN)'''
+        if request.user not in billage.billage_members.all():
+            return Response({'detail': 'You are not a member of this Billage.'}, status=status.HTTP_403_FORBIDDEN)
             
         serializer = ManageViewBillageSerializer(billage)
         billage_data = {'billage': serializer.data}
@@ -148,18 +148,50 @@ class CreateBillage(APIView):
             for user in serializer.validated_data['billage_members']:
                 billage.billage_members.add(user)
 
-            first_member_id = serializer.validated_data['billage_members'][0].id
-            BillageAdmins.objects.create(billage=billage, admin_id=first_member_id)
-
+            for user in serializer.validated_data['billage_admins']:
+                billage.billage_admins.add(user)
+                
             billage.save()
             # Serialize the created Billage instance
             serializer = CreateBillageSerializer(billage)
-
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+from django.shortcuts import get_object_or_404
+
+class RemoveUserFromBillageView(APIView):
+    permission_classes = (IsAuthenticated,)
     
+    def post(self, request, billage_id, user_id, format=None):
+        billage = get_object_or_404(Billage, billage_id=billage_id)
+        user_to_remove = get_object_or_404(User, id=user_id)
+
+        if user_to_remove in billage.billage_members.all():
+            billage.billage_members.remove(user_to_remove)
+            print(billage.billage_members.all())
+            if not billage.check_and_delete_if_empty():
+                # Save the Billage instance
+                billage.save()
+                if user_to_remove in billage.get_admins():
+                    billage.billage_admins.remove(user_to_remove)
+                print(billage.get_admins())
+                if billage.get_admins() is None:
+                    new_admin = billage.billage_members.first()
+                    print(new_admin)
+                    billage.billage_admins.add(new_admin)
+                    billage.save()
+            # Return a success response
+            return Response({"detail": "User removed from Billage."}, status=status.HTTP_200_OK)
+        else:
+            # Return an error response if the user is not in the Billage
+            return Response({"detail": "User is not a member of the Billage."}, status=status.HTTP_400_BAD_REQUEST)
+
+    
+    
+    
+
 class JoinBillage(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -203,7 +235,6 @@ class JoinBillage(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-from rest_framework.permissions import IsAuthenticated
 from .serializers import ShareableLinkSerializer
 
 class CreateShareableLink(APIView):
@@ -211,7 +242,7 @@ class CreateShareableLink(APIView):
 
     def post(self, request, billage_id):
         billage = Billage.objects.get(pk=billage_id)
-
+ 
         if request.user not in billage.billage_members.all():
             return Response({'detail': 'You are not a member of this Billage.'}, status=status.HTTP_403_FORBIDDEN)
 

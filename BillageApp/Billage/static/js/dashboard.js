@@ -100,6 +100,9 @@ function handleCreateSubmission(){
                 'billage_name': billageName,
                 'billage_members' : [
                     user_id
+                ],
+                'billage_admins': [
+                    user_id
                 ]
             }
 
@@ -223,7 +226,6 @@ function handleShareButton(billageID){
     const shareButton = document.getElementById('on-create-share-button');
 
     shareButton.addEventListener('click', async () => {
-        console.log('Share button clicked');
         const token = localStorage.getItem('access_token');
         const response = await fetch(`/api/create_shareable_link/${billageID}/`, {
             method: 'POST',

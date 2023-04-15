@@ -5,7 +5,6 @@ from .models import *
 
 #Billage
 admin.site.register(Billage)
-admin.site.register(BillageAdmins)
 
 #Bills
 admin.site.register(LinkedBill)

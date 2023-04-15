@@ -93,6 +93,7 @@ class UserBillDetailsHistorySerliazer(serializers.ModelSerializer):
 ### Billage Serializer
 class CreateBillageSerializer(serializers.ModelSerializer):
     billage_members = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
+    billage_admins = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
     
     class Meta:
         model = Billage
@@ -116,17 +117,10 @@ class ShareableLinkSerializer(serializers.ModelSerializer):
         fields = ('billage', 'uuid', 'expires_at')
 
 #manage billage serializers
-
-
-class ManageViewBillageAdminsSerializer(serializers.ModelSerializer):
-    admin = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    class Meta:
-        model = BillageAdmins
-        fields = ['admin']
         
 class ManageViewBillageSerializer(serializers.ModelSerializer):
     billage_members = UserSerializer(many=True)
-    admins = ManageViewBillageAdminsSerializer(many=True, read_only=True)
+    billage_admins = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model = Billage
         fields = '__all__'

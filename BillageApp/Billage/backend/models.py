@@ -2,11 +2,13 @@
         #If the split model is ever changed, all the historical BillBillDetails Objects will link to incorrect splits
         
 import random, string, uuid
+from django.dispatch import receiver
 
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator, MinLengthValidator, MaxLengthValidator
+from django.db.models.signals import m2m_changed
 
 
 def create_billage_id():
@@ -26,6 +28,7 @@ class Billage(models.Model):
     billage_id = models.CharField(primary_key=True, max_length=8, default=create_billage_id, editable=False)
     billage_image = models.ImageField(default="villageicon.png")
     billage_members = models.ManyToManyField(User)
+    billage_admins = models.ManyToManyField(User, related_name='administered_billages')
     billage_name = models.CharField(max_length=20, null=False)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     
@@ -33,11 +36,16 @@ class Billage(models.Model):
         return self.billage_name
     
     def get_admins(self):
-        return self.admins.all()
-    
-class BillageAdmins(models.Model):
-    billage = models.ForeignKey(Billage, on_delete=models.CASCADE, related_name='admins')
-    admin = models.ForeignKey(User, on_delete=models.CASCADE)
+        if self.billage_admins.exists():
+            return self.billage_admins.all()
+        else: return None
+
+    def check_and_delete_if_empty(self):
+        if not self.billage_members.exists():
+            self.delete()
+            return True
+
+
 
     
 
