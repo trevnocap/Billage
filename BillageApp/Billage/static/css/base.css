@@ -43,8 +43,8 @@ body {
 }
 
 .btn-info:hover {
-    background-color: #3b3d3a !important;
-    border: #3b3d3a;
+    background-color: #3c3c3c !important;
+    border: #3c3c3c;
     border-radius: 10px;
 }
 
@@ -57,9 +57,10 @@ body {
 }
 
 .btn-warning:hover {
-    background-color: #3b3d3a !important;
-    border: #3b3d3a;
+    background-color: #ba2525 !important;
+    border: #ba2525;
     border-radius: 10px;
+    color: white;
 }
 
 .btn-danger {

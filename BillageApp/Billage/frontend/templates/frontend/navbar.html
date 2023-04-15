@@ -3,7 +3,9 @@
 <link rel="stylesheet" type="text/css" href="{% static '/css/navbar.css'%}">
 
 <nav class="navbar" id="navbar">
-    <img id="logo" src="{% static '/images/logo.png' %}">
+    <a href="http://127.0.0.1:8000/dashboard/">
+      <img id="logo" src="{% static '/images/logo.png' %}" href='http://127.0.0.1:8000/dashboard/'>
+    </a>
     <div class="navbar-userinfo">
       <span class="navbar-username" id="username"></span>
       <button class="btn-success btn-navbar btn-lg create-billage-button">Create a Billage</button>

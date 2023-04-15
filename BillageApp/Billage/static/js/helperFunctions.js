@@ -40,3 +40,55 @@ export function checkAccessTokenAndRedirectToLogin() {
     window.location.href = "http://127.0.0.1:8000/dashboard";
   }
 }
+
+//dashboard functions
+
+export function getBillageCardBootstrapClass(list){
+  if (list.length <= 1) {
+    return ['col-md-12', 'col-lg-12'];
+  } else if (list.length === 2) {
+    return ['col-md-6', 'col-lg-6'];
+  } else {
+    return ['col-md-4', 'col-lg-4'];
+  }
+}
+
+function iconGenorator(type){
+  const iconLibrary = {
+    bank_account: '/images/bankicon.png',
+    credit_card: '/images/creditcardicon.png',
+    Gas: '/images/gas.png',
+    Cable: '/images/cable.png',
+    streaming: '/images/cable.png',
+    Electric: '/images/electric.png',
+    Rent: '/images/rent.png',
+    Water: '/images/water.png',
+    Internet: '/images/internet.png',
+    generalBill: '/images/bill.png',
+  };
+
+  if (type in iconLibrary) {
+    return iconLibrary[type];
+  } else {
+    throw new Error(`Unknown icon type: ${type}`);
+  }
+
+}
+
+export function returnIcon(type){
+  try{
+    return(iconGenorator(type))
+  }
+  catch (error){
+    return returnIcon('generalBill')
+  }
+}
+
+export function formatDate(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${month}-${day}-${year}`;
+}

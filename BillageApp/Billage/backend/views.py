@@ -78,7 +78,7 @@ class ManageBillageDashboardView(APIView):
         linked_bill_data = {'linked_bills': serializer.data}
         
         #billage bills
-        max_bill_display_count = 7
+        max_bill_display_count = 10
         billage_bills_query = BillageBill.objects.filter(linked_bill__billage_link = billage_id)
         billage_bills_to_display = billage_bills_query.order_by('-bill_due_date')[:max_bill_display_count]
         serializer = ManageViewBillageBillSerializer(billage_bills_to_display, many=True)

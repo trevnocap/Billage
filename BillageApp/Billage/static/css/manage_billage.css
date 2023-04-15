@@ -3,3 +3,28 @@
     width: auto;
   }
   
+.edit-name-button {
+  height: 20px;
+  width: auto;
+  padding: 0;
+  margin-left: 5px;
+}
+
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: auto;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.carousel-control-prev {
+  left: 2%; /* Adjust this value to move the button further left */
+}
+
+.carousel-control-next {
+  right: 2%; /* Adjust this value to move the button further right */
+}
+
+  
