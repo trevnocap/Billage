@@ -3,8 +3,9 @@ from .models import *
 
 # Register your models here.
 
-
+#Billage
 admin.site.register(Billage)
+admin.site.register(BillageAdmins)
 
 #Bills
 admin.site.register(LinkedBill)
