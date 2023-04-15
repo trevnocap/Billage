@@ -1,17 +1,17 @@
-import { getBillageCardBootstrapClass } from "./helperFunctions.js";
-import { returnIcon } from "./helperFunctions.js";
-import { formatDate } from "./helperFunctions.js";
+import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt } from "./helperFunctions.js"
 
-
+const accessToken = localStorage.getItem('access_token');
+const decodedToken = parseJwt(accessToken);
+const user_id = decodedToken.user_id;
 
 const mainElement = document.getElementById('main');
 const navbarElement = document.getElementById('navbar');
 const loadingIconElement = document.getElementById('loading-icon');
 
 function getQueryParam(paramName) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(paramName);
-  }
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(paramName);
+}
 
 const billageId = getQueryParam('billage_id');
 
@@ -20,15 +20,17 @@ mainElement.style.display = 'none';
 navbarElement.style.display = 'none';
 loadingIconElement.style.display = 'flex';
 
-
 fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`)
   .then(response => response.json())
   .then(data => {
-    // Billage Details
+    // Billage Details;
     const billageDetailsContainer = document.getElementById('billage-details');
     const billageName = data.billage.billage_name;
     const billageImage = data.billage.billage_image;
     const billageMembers = data.billage.billage_members;
+    const billageAdmins = data.billage.admins;
+
+
 
     const mainRow = document.createElement('div');
     mainRow.classList.add('row');
@@ -73,27 +75,37 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`)
     membersColumn.appendChild(membersHeader);
     
     billageMembers.forEach(member => {
-        const memberRow = document.createElement('div');
-        memberRow.classList.add('row', 'member-row', 'align-items-start', 'mt-1');
-    
-        const memberNameColumn = document.createElement('div');
-        memberNameColumn.classList.add('col-lg-6', 'col-md-6', 'col-sm-6');
-    
-        const memberFullName = document.createElement('p');
-        memberFullName.textContent = `${member.first_name} ${member.last_name}`;
-        memberNameColumn.appendChild(memberFullName);
-    
-        const removeButtonColumn = document.createElement('div');
-        removeButtonColumn.classList.add('col-lg-6', 'col-md-6', 'col-sm-6');
-    
-        const removeButton = document.createElement('button');
-        removeButton.classList.add('btn', 'btn-warning', 'btn-sm');
-        removeButton.textContent = 'Remove';
+      const memberRow = document.createElement('div');
+      memberRow.classList.add('row', 'member-row', 'align-items-start', 'mt-1');
+  
+      const memberNameColumn = document.createElement('div');
+      memberNameColumn.classList.add('col-lg-6', 'col-md-6', 'col-sm-6');
+  
+      const memberFullName = document.createElement('p');
+      memberFullName.textContent = `${member.first_name} ${member.last_name}`;
+      memberNameColumn.appendChild(memberFullName);
+  
+      const removeButtonColumn = document.createElement('div');
+      removeButtonColumn.classList.add('col-lg-6', 'col-md-6', 'col-sm-6');
+  
+      const removeButton = document.createElement('button');
+      removeButton.classList.add('btn', 'btn-warning', 'btn-sm');
+      if (member.id === user_id){
+        removeButton.textContent = 'Leave';
         removeButtonColumn.appendChild(removeButton);
-    
-        memberRow.appendChild(memberNameColumn);
-        memberRow.appendChild(removeButtonColumn);
-        membersColumn.appendChild(memberRow);
+      }else {
+        console.log(billageAdmins);
+        for (const id of billageAdmins){
+          if (id.admin === user_id){
+            removeButton.textContent = 'Remove';
+            removeButtonColumn.appendChild(removeButton);
+          }
+        }
+      }
+  
+      memberRow.appendChild(memberNameColumn);
+      memberRow.appendChild(removeButtonColumn);
+      membersColumn.appendChild(memberRow);
     });
     
     mainRow.appendChild(leftColumn);

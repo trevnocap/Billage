@@ -1,4 +1,4 @@
-import { parseJwt, checkAccessTokenAndRedirectToLogin } from "./helperFunctions.js";
+import { parseJwt, checkAccessTokenAndRedirectToLogin, Popup } from "./helperFunctions.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     checkAccessTokenAndRedirectToLogin();
@@ -6,66 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const mainElement = document.getElementById('main');
 const navbarElement = document.getElementById('navbar');
-let popupWrapper;
-let shouldReload = false;
 
-function createPopup(content) {
+const elements = [mainElement, navbarElement];
 
-    if (popupWrapper) {
-        popupWrapper.remove();
-    }    
-
-    popupWrapper = document.createElement('div');
-    popupWrapper.classList.add('add-billage-popup');
-  
-    const popUp = document.createElement('div');
-    popUp.classList.add('col-md-8', 'col-lg-6', 'col-sm-8', 'border-container', 'bg-light');
-
-    const topRow = document.createElement('div');
-    topRow.classList.add('row', 'mt-3');
-
-    const topRowContent = document.createElement('div');
-    topRowContent.classList.add('col-md-12', 'col-lg-12', 'col-sm-12');
-
-    const closeButton = document.createElement('button');
-    closeButton.innerHTML = '❌'
-    closeButton.classList.add('close-button');
-    closeButton.addEventListener('click', closePopUp);
-
-    const logo = document.createElement('img');
-    logo.src = '/images/logo.png';
-    logo.classList.add('popup-logo');
-    topRowContent.appendChild(logo);
-    topRowContent.appendChild(closeButton);
-    topRow.appendChild(topRowContent);
-    popUp.appendChild(topRow);
-
-
-    const contentRow = document.createElement('div');
-    contentRow.classList.add('row');
-
-    const contentRowContentDiv = document.createElement('div');
-    contentRowContentDiv.classList.add('col-md-12', 'col-lg-12', 'col-sm-12', 'mt-3',);
-    
-    contentRowContentDiv.innerHTML = content;
-    contentRow.appendChild(contentRowContentDiv);
-    popUp.appendChild(contentRow);
-
-    popupWrapper.appendChild(popUp);
-    document.body.appendChild(popupWrapper);
-}
-  
-function closePopUp() {
-    mainElement.style.filter = '';
-    navbarElement.style.filter = '';
-    mainElement.style.pointerEvents = '';
-    navbarElement.style.pointerEvents = '';
-    popupWrapper.remove();
-    if (shouldReload){
-        location.reload();
-    }
-}
-
+const popUp = new Popup(elements);
 
 export function billageButtonsHandler() {
     const createBillageButtons = document.querySelectorAll('.create-billage-button');
@@ -73,7 +17,7 @@ export function billageButtonsHandler() {
 
     createBillageButtons.forEach(button => {
         button.addEventListener('click', () => {
-
+            
             mainElement.style.filter = 'blur(7px)';
             navbarElement.style.filter = 'blur(7px)';
             mainElement.style.pointerEvents = 'none';
@@ -95,7 +39,7 @@ export function billageButtonsHandler() {
                     </div>
                 </div>
             `;
-            createPopup(content)
+            popUp.setContent(content);
 
             handleCreateSubmission();
         });
@@ -125,7 +69,7 @@ export function billageButtonsHandler() {
                 </div>
             `
 
-            createPopup(content);
+            popUp.setContent(content);
 
             handleJoinSubmission();
         });
@@ -224,12 +168,12 @@ function handleJoinSubmission(){
                 });
         
                 if (response.status === 200) {
-                    shouldReload = true;
+                    popUp.shouldReload = true;
                     errorHandler.style.color = 'green';
                     errorHandler.textContent = 'The Billage was successfully joined!'
                     errorHandler.style.display = 'block';
                     setTimeout(() => {
-                        closePopUp();
+                        popUp.closePopUp();
                     }, 2500);   
                 }else if (response.status === 404) {
                     errorHandler.textContent = 'Billage ID not found!'
@@ -250,7 +194,7 @@ function handleJoinSubmission(){
 }
 
 function showNewBillageData(responseData){
-    shouldReload = true;
+    popUp.shouldReload = true;
     const billageID = responseData['billage_id'];
     
     const content = `
@@ -270,7 +214,7 @@ function showNewBillageData(responseData){
     </div>
     `;
 
-    createPopup(content);
+    popUp.setContent(content);
 
     handleShareButton(billageID);
 }
@@ -325,7 +269,7 @@ function handleShareButton(billageID){
             </script>
             `;
 
-            createPopup(content);
+            popUp.setContent(content);
             const script = document.createElement('script');
             script.textContent = `
                 document.getElementById('copy-link-button').addEventListener('click', function () {
@@ -341,7 +285,7 @@ function handleShareButton(billageID){
                         });
                 });
             `;
-            popupWrapper.appendChild(script);
+            popUp.popupWrapper.appendChild(script);
 
         }
 

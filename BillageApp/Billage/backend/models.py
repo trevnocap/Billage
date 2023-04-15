@@ -23,7 +23,7 @@ def create_billage_id():
 
 #Defines a billage group and its members in which bills can be linked to
 class Billage(models.Model):
-    billage_id = models.CharField(primary_key=True, max_length = 8, default=create_billage_id, editable=False)
+    billage_id = models.CharField(primary_key=True, max_length=8, default=create_billage_id, editable=False)
     billage_image = models.ImageField(default="villageicon.png")
     billage_members = models.ManyToManyField(User)
     billage_name = models.CharField(max_length=20, null=False)
@@ -31,6 +31,14 @@ class Billage(models.Model):
     
     def __str__(self):
         return self.billage_name
+    
+    def get_admins(self):
+        return self.admins.all()
+    
+class BillageAdmins(models.Model):
+    billage = models.ForeignKey(Billage, on_delete=models.CASCADE, related_name='admins')
+    admin = models.ForeignKey(User, on_delete=models.CASCADE)
+
     
 
 #Payment Models    

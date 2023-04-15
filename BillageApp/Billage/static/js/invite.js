@@ -1,50 +1,10 @@
-import { checkAccessTokenAndRedirectToLogin, parseJwt } from './helperFunctions.js';
-
-let popupWrapper;
+import { checkAccessTokenAndRedirectToLogin, parseJwt, Popup } from './helperFunctions.js';
 
 const navbarElement = document.getElementById('navbar');
 
-function createPopup(content) {
-    navbarElement.style.filter = 'blur(7px)';
-    if (popupWrapper) {
-        popupWrapper.remove();
-    }    
-
-    popupWrapper = document.createElement('div');
-    popupWrapper.classList.add('add-billage-popup');
-  
-    const popUp = document.createElement('div');
-    popUp.classList.add('col-md-8', 'col-lg-6', 'col-sm-8', 'border-container', 'bg-light');
-
-    const topRow = document.createElement('div');
-    topRow.classList.add('row', 'mt-3');
-
-    const topRowContent = document.createElement('div');
-    topRowContent.classList.add('col-md-12', 'col-lg-12', 'col-sm-12');
-
-    const logo = document.createElement('img');
-    logo.src = '/images/logo.png';
-    logo.classList.add('popup-logo');
-    topRowContent.appendChild(logo);
-    topRow.appendChild(topRowContent);
-    popUp.appendChild(topRow);
-
-
-    const contentRow = document.createElement('div');
-    contentRow.classList.add('row');
-
-    const contentRowContentDiv = document.createElement('div');
-    contentRowContentDiv.classList.add('col-md-12', 'col-lg-12', 'col-sm-12', 'mt-3',);
-    
-    contentRowContentDiv.innerHTML = content;
-    contentRow.appendChild(contentRowContentDiv);
-    popUp.appendChild(contentRow);
-
-    popupWrapper.appendChild(popUp);
-    document.body.appendChild(popupWrapper);
-}
-  
-
+const popUp = new Popup([navbarElement], {
+    closeButton: false,
+});
 
 function extractUUIDFromURL() {
     const path = window.location.pathname;
@@ -54,6 +14,7 @@ function extractUUIDFromURL() {
 
 let buttons;
 document.addEventListener("DOMContentLoaded", async () => {
+    navbarElement.style.filter = "blur(7px)"
     checkAccessTokenAndRedirectToLogin();
     const access_token = localStorage.getItem('access_token');
     const decodedToken = parseJwt(access_token);
@@ -78,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
     `;
     
-    createPopup(content);
+    popUp.setContent(content);
 
     buttons = document.querySelectorAll('.answer-button');
     buttons.forEach(button => {

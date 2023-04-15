@@ -28,12 +28,10 @@ export function checkAccessTokenAndRedirectToLogin() {
   const currentTime = Date.now() / 1000;
 
   if (decodedToken.exp <= currentTime) {
-    // Token is expired, remove the access_token and refresh_token from localStorage
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
 
     if (window.location.pathname !== "/") {
-      // Redirect to the login page
       window.location.href = "http://127.0.0.1:8000/";
     }
   } else if (window.location.pathname === "/") {
@@ -91,4 +89,89 @@ export function formatDate(dateString) {
   const year = date.getFullYear();
 
   return `${month}-${day}-${year}`;
+}
+
+export class Popup {
+  constructor(elements, settings) {
+    this.elements = elements;
+    this.popupWrapper = null;
+    this.shouldReload = false;
+
+    if (settings === undefined) {
+      this.settings = {
+        closeButton: true,
+      };
+    } else {
+      this.settings = settings;
+    }
+
+    this.closePopUp = this.closePopUp.bind(this);
+  }
+
+  createPopup(content) {
+    if (this.popupWrapper) {
+        this.popupWrapper.remove();
+    }
+
+    this.popupWrapper = document.createElement('div');
+    this.popupWrapper.classList.add('add-billage-popup');
+
+    const popUp = document.createElement('div');
+    popUp.classList.add('col-md-8', 'col-lg-6', 'col-sm-8', 'border-container', 'bg-light');
+
+    const topRow = document.createElement('div');
+    topRow.classList.add('row', 'mt-3');
+
+    const topRowContent = document.createElement('div');
+    topRowContent.classList.add('col-md-12', 'col-lg-12', 'col-sm-12');
+
+    let closeButton;
+    if (this.settings.closeButton) {
+      closeButton = document.createElement('button');
+      closeButton.innerHTML = '❌'
+      closeButton.classList.add('close-button');
+      closeButton.addEventListener('click', this.closePopUp);
+    }
+
+    const logo = document.createElement('img');
+    logo.src = '/images/logo.png';
+    logo.classList.add('popup-logo');
+    topRowContent.appendChild(logo);
+    if (closeButton){
+      topRowContent.appendChild(closeButton);
+    }
+    topRow.appendChild(topRowContent);
+    popUp.appendChild(topRow);
+
+
+    const contentRow = document.createElement('div');
+    contentRow.classList.add('row');
+
+    const contentRowContentDiv = document.createElement('div');
+    contentRowContentDiv.classList.add('col-md-12', 'col-lg-12', 'col-sm-12', 'mt-3',);
+    
+    contentRowContentDiv.innerHTML = content;
+    contentRow.appendChild(contentRowContentDiv);
+    popUp.appendChild(contentRow);
+
+    this.popupWrapper.appendChild(popUp);
+    document.body.appendChild(this.popupWrapper);
+  }
+
+  closePopUp() {
+    for (const element of this.elements) {
+      element.style.filter = '';
+      element.style.pointerEvents = '';
+    }
+    this.popupWrapper.remove();
+
+    if (this.shouldReload){
+      location.reload();
+    }
+  }
+
+  setContent(content) {
+    this.createPopup(content);
+  }
+
 }

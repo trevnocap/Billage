@@ -143,13 +143,15 @@ class CreateBillage(APIView):
             billage = Billage.objects.create(
                 billage_name=serializer.validated_data['billage_name'],
             )
-
+            
             # Add users to billage_members field
             for user in serializer.validated_data['billage_members']:
                 billage.billage_members.add(user)
 
-            billage.save()
+            first_member_id = serializer.validated_data['billage_members'][0].id
+            BillageAdmins.objects.create(billage=billage, admin_id=first_member_id)
 
+            billage.save()
             # Serialize the created Billage instance
             serializer = CreateBillageSerializer(billage)
 

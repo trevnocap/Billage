@@ -117,13 +117,21 @@ class ShareableLinkSerializer(serializers.ModelSerializer):
 
 #manage billage serializers
 
+
+class ManageViewBillageAdminsSerializer(serializers.ModelSerializer):
+    admin = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    class Meta:
+        model = BillageAdmins
+        fields = ['admin']
+        
 class ManageViewBillageSerializer(serializers.ModelSerializer):
     billage_members = UserSerializer(many=True)
-    
+    admins = ManageViewBillageAdminsSerializer(many=True, read_only=True)
     class Meta:
         model = Billage
         fields = '__all__'
-        
+
+
 class ManageViewLinkedBillSerializer(LinkedBillSerializer):
     class Meta(LinkedBillSerializer.Meta):
         exclude = ('date_created', 'billage_link',)
