@@ -180,3 +180,102 @@ async function promoteUser(id) {
     console.error(error);
   });
 }
+
+/// Change Billage Name
+export function changeBillageNameButton(leftColumn) {
+  const editNameButton = document.getElementById('change-name');
+  const billageNameSpan = document.getElementById('billage-name-text');
+
+  const errorMessage = document.createElement('p');
+  errorMessage.classList.add('error-message', 'mt-2',);
+  errorMessage.style.color = 'red';
+  errorMessage.style.display = 'none';
+
+  billageNameSpan.parentNode.insertBefore(errorMessage, billageNameSpan.nextSibling);
+
+  editNameButton.addEventListener('click', () => {
+    const originalName = billageNameSpan.textContent;
+    // Make the nameHeader editable
+    billageNameSpan.contentEditable = 'true';
+    billageNameSpan.focus();
+
+    billageNameSpan.addEventListener('input', () => {
+      if (billageNameSpan.textContent.length > 20) {
+        billageNameSpan.textContent = billageNameSpan.textContent.slice(0, 20);
+        // Move the caret to the end of the content
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNodeContents(billageNameSpan);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    });
+
+    // Create Save and Cancel buttons
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save';
+    saveButton.classList.add('btn', 'btn-success', 'btn-sm', 'ml-2');
+
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.classList.add('btn', 'btn-warning', 'btn-sm', 'ml-1');
+
+    billageNameSpan.parentNode.insertBefore(saveButton, billageNameSpan.nextSibling);
+    billageNameSpan.parentNode.insertBefore(cancelButton, saveButton.nextSibling);
+    editNameButton.style.display = 'none';
+    
+
+    // Save the changes when the user clicks the Save button
+    saveButton.addEventListener('click', () => {
+      const newName = billageNameSpan.textContent;
+
+      if (newName.length < 3) {
+        errorMessage.textContent = 'The name must be at least 3 characters long.';
+        errorMessage.style.display = 'block';
+        return;
+      } else {
+        errorMessage.style.display = 'none';
+      }
+
+      // Send a PUT request with the updated name
+      changeBillageName(billageId, newName);
+
+      // Remove Save and Cancel buttons
+      saveButton.remove();
+      cancelButton.remove();
+      errorMessage.remove();
+      editNameButton.style.display = '';
+    });
+
+    // Cancel the changes when the user clicks the Cancel button
+    cancelButton.addEventListener('click', () => {
+      billageNameSpan.contentEditable = 'false';
+      editNameButton.style.display = '';
+
+      billageNameSpan.textContent = originalName;
+
+      // Remove Save and Cancel buttons
+      saveButton.remove();
+      cancelButton.remove();
+      errorMessage.remove();
+    });
+  });
+}
+
+function changeBillageName(billageID, newName){
+  fetch(`http://127.0.0.1:8000/api/manage-billage/change-name/${billageID}/${newName}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ 
+      billage_id: billageID,
+      new_name: newName,
+    })
+  })
+    .catch((error) => {
+      console.error('Error updating billage name:', error);
+    });
+}

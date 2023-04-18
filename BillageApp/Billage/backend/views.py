@@ -62,7 +62,10 @@ class ManageBillageDashboardView(APIView):
     permission_classes = (IsAuthenticated,)
     
     def get(self, request, billage_id):
-        billage = Billage.objects.get(pk=billage_id)  
+        try:
+            billage = Billage.objects.get(pk=billage_id)  
+        except:
+             return Response({'detail': 'This Billage ID does not exist.'}, status=status.HTTP_404_NOT_FOUND)
         
         if request.user not in billage.billage_members.all():
             return Response({'detail': 'You are not a member of this Billage.'}, status=status.HTTP_403_FORBIDDEN)
@@ -200,10 +203,24 @@ class PromoteUserToAdminView(APIView):
         if user_to_promote not in billage.billage_admins.all():
             billage.billage_admins.add(user_to_promote)
             billage.save()
-            
             return Response({"detail": "User successfully promoted to admin."}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "User is already an admin of the Billage."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+class ChangeBillageNameView(APIView):
+    permission_classes = (IsAuthenticated,)
+    permission_classes = [permissions.AllowAny]
+    
+    def put(self, request, billage_id, new_name):
+        billage = get_object_or_404(Billage, billage_id=billage_id)
+        user = request.user
+        
+        if user not in billage.billage_members.all():
+             return Response({"detail": "User is not a member of the Billage."}, status=status.HTTP_401_UNAUTHORIZED)
+        billage.billage_name = new_name
+        billage.save()
+        return Response({"detail": f"Billage name was changed to {new_name}"})
 
 class JoinBillage(APIView):
     permission_classes = [permissions.AllowAny]

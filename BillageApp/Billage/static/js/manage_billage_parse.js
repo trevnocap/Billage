@@ -1,5 +1,5 @@
 import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt, getQueryParam } from "./helperFunctions.js"
-import { handleButtons } from "./buttonHandling/manage_billage_handler.js";
+import { handleButtons, changeBillageNameButton } from "./buttonHandling/manage_billage_handler.js";
 
 
 const token = localStorage.getItem('access_token');
@@ -24,7 +24,7 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     'Authorization': `Bearer ${token}`
   }
 }).then(response => {
-  if (response.status === 403){
+  if (!response.ok){
     window.location.href = 'http://127.0.0.1:8000/dashboard';
   }else{
     return response.json();
@@ -38,7 +38,6 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     const billageMembers = data.billage.billage_members;
     const billageAdmins = data.billage.billage_admins;
 
-    console.log(billageAdmins);
     for(const id of billageAdmins) {
       if(id === user_id) {
         userIdIsAdmin = true;
@@ -51,9 +50,17 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     leftColumn.classList.add('col-lg-6', 'col-md-6', 'col-sm-6',);
 
     const nameHeader = document.createElement('h4');
-    nameHeader.textContent = `Name: ${billageName}`;
-
+    nameHeader.id = 'billage-name';
+    
+    const nameLabel = document.createElement('span');
+    nameLabel.textContent = 'Name: ';
+    
+    const billageNameSpan = document.createElement('span');
+    billageNameSpan.id = 'billage-name-text';
+    billageNameSpan.textContent = billageName;
+    
     const editNameButton = document.createElement('a');
+    editNameButton.id = 'change-name'
     editNameButton.href = '#';
     editNameButton.classList.add('edit-name-button');
 
@@ -73,6 +80,8 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     changeImageButton.textContent = 'Change Image';
 
     leftColumn.appendChild(nameHeader);
+    nameHeader.appendChild(nameLabel);
+    nameHeader.appendChild(billageNameSpan);
     nameHeader.appendChild(editNameButton);
     leftColumn.appendChild(document.createElement('br'));
     leftColumn.appendChild(imageElement);
@@ -114,7 +123,6 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
         if (userIdIsAdmin){
           let memberIsAdmin = false;
           for (const id of billageAdmins){
-            console.log(`Admin: ${id} \nCurrent Member: ${member.id}`);
             if (id === member.id){
               memberIsAdmin = true;
             }
@@ -134,6 +142,8 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
       memberRow.appendChild(memberNameColumn);
       memberRow.appendChild(removeButtonColumn);
       membersColumn.appendChild(memberRow);
+
+      
     });
     
     mainRow.appendChild(leftColumn);
@@ -347,6 +357,7 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     }
 
     handleButtons();
+    changeBillageNameButton(leftColumn);
 
   })
 

@@ -27,4 +27,12 @@
   right: 2%; /* Adjust this value to move the button further right */
 }
 
-  
+[contenteditable="true"]:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.error-message{
+  font-size: 14px;
+}
