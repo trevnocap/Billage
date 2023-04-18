@@ -62,8 +62,7 @@ class ManageBillageDashboardView(APIView):
     permission_classes = (IsAuthenticated,)
     
     def get(self, request, billage_id):
-        billage = Billage.objects.get(pk=billage_id)
-
+        billage = Billage.objects.get(pk=billage_id)  
         
         if request.user not in billage.billage_members.all():
             return Response({'detail': 'You are not a member of this Billage.'}, status=status.HTTP_403_FORBIDDEN)
@@ -170,7 +169,7 @@ class RemoveUserFromBillageView(APIView):
 
         if user_to_remove in billage.billage_members.all():
             billage.billage_members.remove(user_to_remove)
-            print(billage.billage_members.all())
+            
             if not billage.check_and_delete_if_empty():
                 # Save the Billage instance
                 billage.save()
@@ -186,11 +185,25 @@ class RemoveUserFromBillageView(APIView):
             return Response({"detail": "User removed from Billage."}, status=status.HTTP_200_OK)
         else:
             # Return an error response if the user is not in the Billage
-            return Response({"detail": "User is not a member of the Billage."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "User is not a member of the Billage."}, status=status.HTTP_404_NOT_FOUND)
 
+class PromoteUserToAdminView(APIView):
+    permission_classes = (IsAuthenticated,)
     
-    
-    
+    def post(self, request, billage_id, user_id, format=None):
+        billage = get_object_or_404(Billage, billage_id=billage_id)
+        user_to_promote = get_object_or_404(User, id=user_id)
+        if user_to_promote not in billage.billage_members.all():
+            return Response({"detail": "User is not a member of the Billage."}, status=status.HTTP_404_NOT_FOUND)
+        print(user_to_promote)
+        print(billage.billage_admins.all())
+        if user_to_promote not in billage.billage_admins.all():
+            billage.billage_admins.add(user_to_promote)
+            billage.save()
+            
+            return Response({"detail": "User successfully promoted to admin."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "User is already an admin of the Billage."}, status=status.HTTP_400_BAD_REQUEST)
 
 class JoinBillage(APIView):
     permission_classes = [permissions.AllowAny]

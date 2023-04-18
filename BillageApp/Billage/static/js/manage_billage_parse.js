@@ -38,8 +38,11 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     const billageMembers = data.billage.billage_members;
     const billageAdmins = data.billage.billage_admins;
 
+    console.log(billageAdmins);
     for(const id of billageAdmins) {
-      userIdIsAdmin = true;
+      if(id === user_id) {
+        userIdIsAdmin = true;
+      }
     }
     const mainRow = document.createElement('div');
     mainRow.classList.add('row');
@@ -109,18 +112,22 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
         removeButtonColumn.appendChild(removeButton);
       }else {
         if (userIdIsAdmin){
+          let memberIsAdmin = false;
           for (const id of billageAdmins){
-            if (id !== member.id){
-              promoteButton.textContent = 'Make Admin';
-              promoteButton.classList.add('mr-1')
-              promoteButton.id = member.id;
-              removeButtonColumn.appendChild(promoteButton);
+            console.log(`Admin: ${id} \nCurrent Member: ${member.id}`);
+            if (id === member.id){
+              memberIsAdmin = true;
             }
           }
-          
-          removeButton.textContent = 'Remove';
-          removeButton.id = member.id;
-          removeButtonColumn.appendChild(removeButton);
+          if (!memberIsAdmin){
+            promoteButton.textContent = 'Make Admin';
+            promoteButton.classList.add('mr-1')
+            promoteButton.id = member.id;
+            removeButtonColumn.appendChild(promoteButton);
+            removeButton.textContent = 'Remove';
+            removeButton.id = member.id;
+            removeButtonColumn.appendChild(removeButton);
+          }
         }
       }
 

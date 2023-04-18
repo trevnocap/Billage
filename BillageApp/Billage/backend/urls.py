@@ -11,7 +11,7 @@ urlpatterns = [
     path('create_shareable_link/<str:billage_id>/', CreateShareableLink.as_view(), name='create_shareable_link'),
     path('manage-billage/<str:billage_id>/', ManageBillageDashboardView.as_view(), name='manage-billage'),
     path('manage-billage/<str:billage_id>/remove-user/<str:user_id>/', RemoveUserFromBillageView.as_view(), name='remove_user_from_billage'),
-    
+    path('manage-billage/<str:billage_id>/promote-user/<str:user_id>/', PromoteUserToAdminView.as_view(), name='promote_user_to_admin'),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 ]
