@@ -1,6 +1,8 @@
-import { parseJwt, checkAccessTokenAndRedirectToLogin } from "./helperFunctions.js";
+import { parseJwt, checkAccessTokenAndRedirectToLogin } from "./helper_functions.js";
 
-checkAccessTokenAndRedirectToLogin();
+document.addEventListener("DOMContentLoaded", () => {
+  checkAccessTokenAndRedirectToLogin();
+});
 
 const loginForm = document.getElementById('login-form');
 

@@ -1,4 +1,4 @@
-import { Popup, getQueryParam } from "../helperFunctions.js";
+import { Popup, getQueryParam } from "../helper_functions.js";
 
 const token = localStorage.getItem('access_token');
 

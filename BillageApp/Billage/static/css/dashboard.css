@@ -16,12 +16,15 @@ width: auto;
 
 .carousel-control-prev,
 .carousel-control-next {
-  width: 50%;
+  width: auto;
+  padding: 0 20px; /* Increase the padding to make the selection box slightly wider */
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  background: none;
 }
-
 .carousel-control-prev {
   left: 0;
 }

@@ -178,10 +178,10 @@ class RemoveUserFromBillageView(APIView):
                 billage.save()
                 if user_to_remove in billage.get_admins():
                     billage.billage_admins.remove(user_to_remove)
-                print(billage.get_admins())
+                
                 if billage.get_admins() is None:
                     new_admin = billage.billage_members.first()
-                    print(new_admin)
+                    
                     billage.billage_admins.add(new_admin)
                     billage.save()
             # Return a success response
@@ -198,8 +198,7 @@ class PromoteUserToAdminView(APIView):
         user_to_promote = get_object_or_404(User, id=user_id)
         if user_to_promote not in billage.billage_members.all():
             return Response({"detail": "User is not a member of the Billage."}, status=status.HTTP_404_NOT_FOUND)
-        print(user_to_promote)
-        print(billage.billage_admins.all())
+
         if user_to_promote not in billage.billage_admins.all():
             billage.billage_admins.add(user_to_promote)
             billage.save()

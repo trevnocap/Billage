@@ -1,4 +1,4 @@
-import { parseJwt, checkAccessTokenAndRedirectToLogin, Popup } from "./helperFunctions.js";
+import { parseJwt, checkAccessTokenAndRedirectToLogin, Popup } from "../helper_functions.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     checkAccessTokenAndRedirectToLogin();

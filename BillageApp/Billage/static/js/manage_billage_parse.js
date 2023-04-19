@@ -1,6 +1,9 @@
-import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt, getQueryParam } from "./helperFunctions.js"
+import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt, getQueryParam, checkAccessTokenAndRedirectToLogin } from "./helper_functions.js"
 import { handleButtons, changeBillageNameButton, changeBillageImageButton } from "./buttonHandling/manage_billage_handler.js";
 
+document.addEventListener("DOMContentLoaded", () => {
+  checkAccessTokenAndRedirectToLogin();
+});
 
 const token = localStorage.getItem('access_token');
 const decodedToken = parseJwt(token);
