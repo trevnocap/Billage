@@ -1,5 +1,5 @@
 import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt, getQueryParam } from "./helperFunctions.js"
-import { handleButtons, changeBillageNameButton } from "./buttonHandling/manage_billage_handler.js";
+import { handleButtons, changeBillageNameButton, changeBillageImageButton } from "./buttonHandling/manage_billage_handler.js";
 
 
 const token = localStorage.getItem('access_token');
@@ -61,7 +61,6 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     
     const editNameButton = document.createElement('a');
     editNameButton.id = 'change-name'
-    editNameButton.href = '#';
     editNameButton.classList.add('edit-name-button');
 
     const editIcon = document.createElement('img');
@@ -76,6 +75,7 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     imageElement.classList.add('billage-image', 'mt-3');
 
     const changeImageButton = document.createElement('button');
+    changeImageButton.id = 'change-image'
     changeImageButton.classList.add('btn', 'btn-info', 'btn-sm', 'ml-5', 'mt-3');
     changeImageButton.textContent = 'Change Image';
 
@@ -358,6 +358,7 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
 
     handleButtons();
     changeBillageNameButton(leftColumn);
+    changeBillageImageButton();
 
   })
 

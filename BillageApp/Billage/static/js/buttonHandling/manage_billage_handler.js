@@ -279,3 +279,54 @@ function changeBillageName(billageID, newName){
       console.error('Error updating billage name:', error);
     });
 }
+
+/// Chnage image
+export function changeBillageImageButton() {
+  const changeImageButton = document.getElementById('change-image');
+  const imageElement = document.querySelector('.billage-image');
+
+  changeImageButton.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.style.display = 'none';
+
+    input.addEventListener('change', (event) => {
+      const imageFile = event.target.files[0];
+      if (imageFile) {
+        // Display a preview of the selected image
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          imageElement.src = e.target.result;
+        };
+        reader.readAsDataURL(imageFile);
+
+        // Send a PUT request with the updated image
+        changeBillageImage(imageFile);
+      }
+    });
+
+    document.body.appendChild(input);
+    input.click();
+    input.remove();
+  });
+}
+
+
+function changeBillageImage(imageFile) {
+  const formData = new FormData();
+  formData.append('billage_id', billageId);
+  formData.append('billage_image', imageFile);
+
+  fetch(`http://127.0.0.1:8000/api/manage-billage/change-image/${billageId}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData
+  })
+  .catch((error) => {
+    console.error('Error updating billage image:', error);
+  });
+}
+

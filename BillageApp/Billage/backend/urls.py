@@ -15,6 +15,7 @@ urlpatterns = [
     path('manage-billage/<str:billage_id>/remove-user/<str:user_id>/', RemoveUserFromBillageView.as_view(), name='remove_user_from_billage'),
     path('manage-billage/<str:billage_id>/promote-user/<str:user_id>/', PromoteUserToAdminView.as_view(), name='promote_user_to_admin'),
     path('manage-billage/change-name/<str:billage_id>/<str:new_name>', ChangeBillageNameView.as_view(), name='change_billage_name'),
+    path('manage-billage/change-image/<str:billage_id>', ChangeBillageImageView.as_view(), name='change_billage_image'),
     
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
