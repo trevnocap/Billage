@@ -186,12 +186,10 @@ export function changeBillageNameButton(leftColumn) {
   const editNameButton = document.getElementById('change-name');
   const billageNameSpan = document.getElementById('billage-name-text');
 
-  const errorMessage = document.createElement('p');
-  errorMessage.classList.add('error-message', 'mt-2',);
-  errorMessage.style.color = 'red';
+  const errorMessage = document.createElement('div');
+  errorMessage.classList.add('alert', 'alert-danger', 'mt-2', 'error-message');
   errorMessage.style.display = 'none';
-
-  billageNameSpan.parentNode.insertBefore(errorMessage, billageNameSpan.nextSibling);
+  editNameButton.parentNode.insertBefore(errorMessage, billageNameSpan.nextSibling);
 
   editNameButton.addEventListener('click', () => {
     const originalName = billageNameSpan.textContent;
@@ -244,7 +242,7 @@ export function changeBillageNameButton(leftColumn) {
       // Remove Save and Cancel buttons
       saveButton.remove();
       cancelButton.remove();
-      errorMessage.remove();
+      errorMessage.style.display = 'none';
       editNameButton.style.display = '';
     });
 
@@ -258,7 +256,7 @@ export function changeBillageNameButton(leftColumn) {
       // Remove Save and Cancel buttons
       saveButton.remove();
       cancelButton.remove();
-      errorMessage.remove();
+      errorMessage.style.display = 'none';
     });
   });
 }
@@ -280,35 +278,97 @@ function changeBillageName(billageID, newName){
     });
 }
 
-/// Chnage image
+/// Change image
 export function changeBillageImageButton() {
   const changeImageButton = document.getElementById('change-image');
   const imageElement = document.querySelector('.billage-image');
 
+  let errorMessage;
+
   changeImageButton.addEventListener('click', () => {
+    if (errorMessage) {
+      errorMessage.style.display = 'none';
+    }
+
+    changeImageButton.style.display = 'none';
+
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.style.display = 'none';
 
+    errorMessage = document.createElement('div');
+    errorMessage.classList.add('alert', 'alert-danger', 'mt-2', 'error-message');
+    errorMessage.style.display = 'none';
+    changeImageButton.parentNode.insertBefore(errorMessage, changeImageButton.nextSibling);
+
+
+    errorMessage.addEventListener('click', () => { // Add this event listener to clear the error message on click
+      errorMessage.style.display = 'none';
+    });
+
+
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save';
+    saveButton.classList.add('btn', 'btn-success', 'btn-sm', 'ml-2');
+
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.classList.add('btn', 'btn-warning', 'btn-sm', 'ml-1');
+
+    changeImageButton.parentNode.insertBefore(saveButton, errorMessage.nextSibling);
+    changeImageButton.parentNode.insertBefore(cancelButton, saveButton.nextSibling);
+
+    let originalSrc = imageElement.src;
+
     input.addEventListener('change', (event) => {
       const imageFile = event.target.files[0];
-      if (imageFile) {
+      const validImageTypes = ['image/jpeg', 'image/png'];
+
+      errorMessage.style.display = 'none';
+
+      // Check if the file type is an allowed image type
+      if (imageFile && validImageTypes.includes(imageFile.type)) {
         // Display a preview of the selected image
         const reader = new FileReader();
         reader.onload = (e) => {
           imageElement.src = e.target.result;
         };
         reader.readAsDataURL(imageFile);
+        errorMessage.style.display = 'none';
+      } else if (imageFile) {
+        errorMessage.textContent = 'Please select a valid image file (JPEG or PNG)';
+        errorMessage.style.display = 'block';
+        saveButton.remove()
+        cancelButton.remove()
+        changeImageButton.style.display = '';
+      }
+    });
 
-        // Send a PUT request with the updated image
+    saveButton.addEventListener('click', () => {
+      const imageFile = input.files[0];
+      if (imageFile) {
         changeBillageImage(imageFile);
       }
+      saveButton.remove();
+      cancelButton.remove();
+      errorMessage.remove();
+      changeImageButton.style.display = '';
+
+    });
+
+    cancelButton.addEventListener('click', () => {
+      imageElement.src = originalSrc;
+      errorMessage.style.display = 'none';
+      saveButton.remove();
+      cancelButton.remove();
+      changeImageButton.style.display = '';
+
     });
 
     document.body.appendChild(input);
     input.click();
-    input.remove();
+    document.body.removeChild(input);
   });
 }
 

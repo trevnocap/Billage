@@ -34,6 +34,21 @@ def handle_bill_status_change(sender, instance, **kwargs):
         
         bill_history.save()
         instance.delete()
+        
+@receiver(pre_save, sender = Billage)
+def handle_billage_image_change(sender, instance, **kwargs):
+    from django.core.files.storage import default_storage
+    billage = sender.objects.get(pk=instance.pk)
+    
+    if billage:
+        old_image = billage.billage_image
+    else:
+        return
+    
+    new_image = instance.billage_image
+    
+    if old_image != new_image:
+        default_storage.delete(old_image.path)
 
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver

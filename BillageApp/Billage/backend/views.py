@@ -226,8 +226,7 @@ from django.conf import settings
 import os
 
 class ChangeBillageImageView(APIView):
-    #permission_classes = (IsAuthenticated,)
-    permission_classes = [permissions.AllowAny]
+    permission_classes = (IsAuthenticated,)
 
     def put(self, request, billage_id):
         billage = get_object_or_404(Billage, billage_id=billage_id)
@@ -238,9 +237,10 @@ class ChangeBillageImageView(APIView):
 
         if 'billage_image' in request.FILES:
             image_file = request.FILES['billage_image']
+            folder_path = 'billageimages/'
 
             # Save the image to the static files directory
-            file_name = default_storage.save(f'{billage_id}{image_file.name}', ContentFile(image_file.read()))
+            file_name = default_storage.save(folder_path + f'{billage_id}{image_file.name}', ContentFile(image_file.read()))
 
             # Construct the file URL
             file_url = file_name
