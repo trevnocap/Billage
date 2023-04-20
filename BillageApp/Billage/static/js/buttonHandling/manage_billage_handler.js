@@ -193,24 +193,41 @@ export function changeBillageNameButton(leftColumn) {
 
   editNameButton.addEventListener('click', () => {
     const originalName = billageNameSpan.textContent;
+
+    
     // Make the nameHeader editable
     billageNameSpan.contentEditable = 'true';
     billageNameSpan.focus();
 
-    billageNameSpan.addEventListener('input', () => {
-      if (billageNameSpan.textContent.length > 20) {
-        billageNameSpan.textContent = billageNameSpan.textContent.slice(0, 20);
-        // Move the caret to the end of the content
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.selectNodeContents(billageNameSpan);
-        range.collapse(false);
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
-    });
+    const range = document.createRange();
+    range.selectNodeContents(billageNameSpan);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
 
-    // Create Save and Cancel buttons
+    const saveChanges = () => {
+      const newName = billageNameSpan.textContent;
+  
+      if (newName.length < 5) {
+        errorMessage.textContent = 'The name must be at least 5 characters long.';
+        errorMessage.style.display = 'block';
+        return;
+      } else {
+        errorMessage.style.display = 'none';
+      }
+  
+      // Send a PUT request with the updated name
+      changeBillageName(billageId, newName);
+  
+      // Remove Save and Cancel buttons
+      saveButton.remove();
+      cancelButton.remove();
+      billageNameSpan.contentEditable = false;
+      errorMessage.style.display = 'none';
+      editNameButton.style.display = '';
+    };
+
+    // `Create` Save and Cancel buttons
     const saveButton = document.createElement('button');
     saveButton.textContent = 'Save';
     saveButton.classList.add('btn', 'btn-success', 'btn-sm', 'ml-2');
@@ -225,26 +242,7 @@ export function changeBillageNameButton(leftColumn) {
     
 
     // Save the changes when the user clicks the Save button
-    saveButton.addEventListener('click', () => {
-      const newName = billageNameSpan.textContent;
-
-      if (newName.length < 3) {
-        errorMessage.textContent = 'The name must be at least 3 characters long.';
-        errorMessage.style.display = 'block';
-        return;
-      } else {
-        errorMessage.style.display = 'none';
-      }
-
-      // Send a PUT request with the updated name
-      changeBillageName(billageId, newName);
-
-      // Remove Save and Cancel buttons
-      saveButton.remove();
-      cancelButton.remove();
-      errorMessage.style.display = 'none';
-      editNameButton.style.display = '';
-    });
+    saveButton.addEventListener('click', saveChanges)
 
     // Cancel the changes when the user clicks the Cancel button
     cancelButton.addEventListener('click', () => {
@@ -257,6 +255,13 @@ export function changeBillageNameButton(leftColumn) {
       saveButton.remove();
       cancelButton.remove();
       errorMessage.style.display = 'none';
+    });
+
+    billageNameSpan.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        saveChanges();
+      }
     });
   });
 }
