@@ -230,25 +230,26 @@ class ChangeBillageImageView(APIView):
 
     def put(self, request, billage_id):
         billage = get_object_or_404(Billage, billage_id=billage_id)
+        old_image = billage.billage_image
         user = request.user
 
         if user not in billage.billage_members.all():
             return Response({"detail": "User is not a member of the Billage."}, status=status.HTTP_401_UNAUTHORIZED)
 
         if 'billage_image' in request.FILES:
-            image_file = request.FILES['billage_image']
+            new_image = request.FILES['billage_image']
             folder_path = 'billageimages/'
 
             # Save the image to the static files directory
-            file_name = default_storage.save(folder_path + f'{billage_id}{image_file.name}', ContentFile(image_file.read()))
+            file_path = default_storage.save(folder_path + f'{billage_id}{new_image.name}', ContentFile(new_image.read()))
 
-            # Construct the file URL
-            file_url = file_name
-
-            billage.billage_image = file_url
+            billage.billage_image = file_path
             billage.save()
+            
+        if old_image != new_image and old_image != 'billageimages/villageicon.png':
+            default_storage.delete(old_image.path)
 
-            return Response({"detail": f"Billage image was changed to {file_url}"})
+            return Response({"detail": f"Billage image was changed to {file_path}"})
         else:
             return Response({"detail": "No image file provided."}, status=status.HTTP_400_BAD_REQUEST)
 
