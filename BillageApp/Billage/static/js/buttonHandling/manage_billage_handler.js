@@ -197,28 +197,28 @@ export function changeBillageNameButton(leftColumn) {
     
     // Make the nameHeader editable
     billageNameSpan.contentEditable = 'true';
+    billageNameSpan.style.backgroundColor = '#EAEAEA';
     billageNameSpan.focus();
-
-    const range = document.createRange();
-    range.selectNodeContents(billageNameSpan);
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
 
     const saveChanges = () => {
       const newName = billageNameSpan.textContent;
+      billageNameSpan.style.backgroundColor = ''
   
-      if (newName.length < 5) {
-        errorMessage.textContent = 'The name must be at least 5 characters long.';
+      if (newName.length < 5 || newName.length > 20) {
+        errorMessage.textContent = 'The name must be at 5-20 characters long.';
         errorMessage.style.display = 'block';
+        
         return;
       } else {
         errorMessage.style.display = 'none';
       }
   
       // Send a PUT request with the updated name
-      changeBillageName(billageId, newName);
-  
+      if (newName == originalName) {
+      }else{
+        changeBillageName(billageId, newName);
+      }
+
       // Remove Save and Cancel buttons
       saveButton.remove();
       cancelButton.remove();

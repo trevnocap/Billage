@@ -38,7 +38,10 @@ def handle_bill_status_change(sender, instance, **kwargs):
 @receiver(pre_save, sender = Billage)
 def handle_billage_image_change(sender, instance, **kwargs):
     from django.core.files.storage import default_storage
-    billage = sender.objects.get(pk=instance.pk)
+    try: #if billage is new this will return
+        billage = sender.objects.get(pk=instance.pk)
+    except:
+        return
     
     if billage:
         old_image = billage.billage_image
