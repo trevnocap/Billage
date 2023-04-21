@@ -1,4 +1,4 @@
-import { checkAccessTokenAndRedirectToLogin, parseJwt, Popup } from './helperFunctions.js';
+import { checkAccessTokenAndRedirectToLogin, parseJwt, Popup } from './helper_functions.js';
 
 const navbarElement = document.getElementById('navbar');
 
