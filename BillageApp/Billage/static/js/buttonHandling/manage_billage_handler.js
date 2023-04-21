@@ -240,6 +240,7 @@ export function changeBillageNameButton(leftColumn) {
     billageNameSpan.parentNode.insertBefore(cancelButton, saveButton.nextSibling);
     editNameButton.style.display = 'none';
     
+    
 
     // Save the changes when the user clicks the Save button
     saveButton.addEventListener('click', saveChanges)
@@ -248,6 +249,7 @@ export function changeBillageNameButton(leftColumn) {
     cancelButton.addEventListener('click', () => {
       billageNameSpan.contentEditable = 'false';
       editNameButton.style.display = '';
+      billageNameSpan.style.backgroundColor = ''
 
       billageNameSpan.textContent = originalName;
 
