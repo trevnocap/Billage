@@ -13,7 +13,7 @@ def create_user_bill_due_amount(sender, instance, created, **kwargs):
             user = split.user
             UserActiveBillDue.objects.create(
                 linked_bill = instance.linked_bill,
-                active_bill = instance,
+                billage_bill = instance,
                 user = user,
                 due_amount=due_amount,
                 bill_due_date = instance.bill_due_date,
@@ -26,6 +26,7 @@ def handle_bill_status_change(sender, instance, **kwargs):
         bill_history = UserBillDetailsHistory(
             user = instance.user,
             linked_bill = instance.linked_bill,
+            billage_bill = instance.billage_bill,
             payment_method = instance.payment_method,
             due_amount = instance.due_amount,
             bill_due_date = instance.bill_due_date,
@@ -34,6 +35,8 @@ def handle_bill_status_change(sender, instance, **kwargs):
         
         bill_history.save()
         instance.delete()
+        
+
 
 
 from django.contrib.auth.signals import user_logged_in

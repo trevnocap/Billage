@@ -33,6 +33,7 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     return response.json();
   }
 }).then(data => {
+    console.log(data)
     let userIdIsAdmin = false;
     // Billage Details;
     const billageDetailsContainer = document.getElementById('billage-details');

@@ -153,7 +153,7 @@ class BillageBill(models.Model):
     date_created = models.DateField(auto_now_add=True)
     
     def __str__(self):
-     return f"{self.linked_bill.billage_link.billage_name} - {self.linked_bill.bill_provider_name}"
+     return f"{self.linked_bill.billage_link.billage_name} - {self.linked_bill.bill_provider_name} - {self.bill_due_date} "
     
     
 #Defines how a user will pay for a linked bill and what percentage they will pay    
@@ -178,7 +178,7 @@ class UserActiveBillDue(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     linked_bill = models.ForeignKey(LinkedBill, on_delete=models.CASCADE)
-    active_bill = models.ForeignKey(BillageBill, on_delete=models.CASCADE)
+    billage_bill = models.ForeignKey(BillageBill, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     due_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     bill_due_date = models.DateField(auto_now=False)
@@ -197,6 +197,7 @@ class UserBillDetailsHistory(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     linked_bill = models.ForeignKey(LinkedBill, on_delete=models.SET_NULL, null=True)
+    billage_bill = models.ForeignKey(BillageBill, on_delete=models.SET_NULL, null=True)
     payment_method = models.ForeignKey(UserPaymentMethod, on_delete=models.SET_NULL, null=True)
     due_amount = models.DecimalField(max_digits = 7, decimal_places = 2, default=0)
     bill_due_date = models.DateField()

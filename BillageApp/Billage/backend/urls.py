@@ -17,6 +17,8 @@ urlpatterns = [
     path('manage-billage/change-name/<str:billage_id>/<str:new_name>', ChangeBillageNameView.as_view(), name='change_billage_name'),
     path('manage-billage/change-image/<str:billage_id>', ChangeBillageImageView.as_view(), name='change_billage_image'),
     
+    path('view-user-bills/<str:user_id>/<int:display_count>/<int:page_number>', UserBillHistoryTableView.as_view(), name='user_bill_history'),
+    
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 ]

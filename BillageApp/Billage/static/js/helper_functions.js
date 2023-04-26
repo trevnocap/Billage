@@ -91,6 +91,7 @@ export function formatDate(dateString) {
   return `${month}-${day}-${year}`;
 }
 
+
 export class Popup {
   constructor(elements, settings) {
     this.elements = elements;

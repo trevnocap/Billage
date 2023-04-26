@@ -76,7 +76,7 @@ class UserActiveBillDueSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserActiveBillDue
-        exclude = ('id', 'user', 'active_bill', 'linked_bill', "payment_method",)
+        exclude = ('id', 'user', 'linked_bill', "payment_method",)
         
         
 class UserBillDetailsHistorySerliazer(serializers.ModelSerializer):
@@ -137,3 +137,44 @@ class ManageViewBillageBillSerializer(BillageBillSerializer):
     class Meta(BillageBillSerializer.Meta):
         exclude = ('date_created',)
         
+#View Bills Serializers
+
+class ViewUserBillsSerializer(serializers.Serializer):
+    
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+    
+    class LinkedBillDataSerialier(serializers.ModelSerializer):
+        billage = serializers.CharField(source = "billage_link.billage_name")
+        split_percentage = serializers.SerializerMethodField()
+        
+        class Meta:
+            model = LinkedBill
+            exclude = ('date_created', 'linked_bill', 'billage_link',)
+            
+        def get_split_percentage(self, obj):
+            user = self.context.get('user')
+            if user:
+                user_linked_bill_split = obj.linkedbillsplit_set.filter(user=user).first()
+                if user_linked_bill_split:
+                    return user_linked_bill_split.split_percentage
+            return None
+            
+    class BillageBillDataSerialier(serializers.ModelSerializer):
+        class Meta:
+            model = BillageBill
+            exclude = ('date_created', 'linked_bill', 'bill_id', 'bill_due_date',)
+            
+    class PaymentMethodDataSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = UserPaymentMethod
+            exclude = ('payment_method_id', 'user',)
+     
+    due_amount = serializers.DecimalField(max_digits=7, decimal_places=2, default=0)
+    bill_due_date = serializers.DateField()
+    bill_status = serializers.CharField(max_length=50) 
+    date_closed = serializers.DateField(allow_null=True)       
+    linked_bill = LinkedBillDataSerialier(read_only=True)
+    billage_bill = BillageBillDataSerialier(read_only=True)
+    payment_method = PaymentMethodDataSerializer(read_only=True)

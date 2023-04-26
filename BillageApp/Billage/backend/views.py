@@ -15,11 +15,29 @@ def payment_methods_fetch(user_id):
             
         return payment_method_data
 
+def user_active_bills_fetch(user_id, bill_count):
+    active_bills_query = UserActiveBillDue.objects.filter(user = user_id)
+    bills_to_return = active_bills_query.order_by('bill_due_date')[:bill_count]
+    
+    return bills_to_return
 
+def user_historical_bills_fetch(user_id, bill_count):
+    historical_bills_query = UserBillDetailsHistory.objects.filter(user = user_id)
+    bills_to_return = historical_bills_query.order_by('bill_due_date')[:bill_count]
+    
+    return bills_to_return
+
+def user_bills_fetch(user_id, bill_count):
+    active_bills_query = UserActiveBillDue.objects.filter(user = user_id)
+    historical_bills_query = UserBillDetailsHistory.objects.filter(user = user_id)
+    
+    bills_list = list(active_bills_query) + list(historical_bills_query)
+    ordered_list = sorted(bills_list, key=lambda x: x.bill_due_date, reverse=True)[:bill_count]
+    
+    return ordered_list
 
 ### Page View APIs
     
-        
 class DashboardView(APIView):
     permission_classes = [permissions.AllowAny]
     
@@ -41,9 +59,7 @@ class DashboardView(APIView):
         ##User Bill Details to display
         max_bill_display_count = 7
         #active bills data
-        active_bills_query = UserActiveBillDue.objects.filter(user = user_id)
-        active_bills_to_display = active_bills_query.order_by('bill_due_date')[:max_bill_display_count]
-        serializer = UserActiveBillDueSerializer(active_bills_to_display, many=True)
+        serializer = UserActiveBillDueSerializer(user_active_bills_fetch(user_id, max_bill_display_count), many=True)
         active_bills_data = {"active_bills": serializer.data}
 
 
@@ -95,33 +111,25 @@ class ManageBillageDashboardView(APIView):
         return Response(response_data)
         
         
-
+class UserBillHistoryTableView(APIView):
+    permission_classes= [permissions.AllowAny]
     
-    
-    ### Functionality APIs
-
-
-    """
-class LoginView(APIView):
-    permission_classes = [permissions.AllowAny]
-    authentication_classes = [TokenAuthentication]
-    
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
+    def get(self, request, user_id, display_count, page_number):
+        bills = user_bills_fetch(user_id, display_count)
         
-        if serializer.is_valid():
-            user = authenticate(username=serializer.validated_data['username'], password=serializer.validated_data['password'])
-            
-            if user is not None:
-                login(request, user)
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({'success': True, 'token': token.key, 'id': user.id})
-            else:
-                return Response({'success': False, 'error': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response({'success': False, 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)"""
+        #serializer = ViewUserBillsSerializer(bills, many=True, context={'user': request.user})
+        serializer = ViewUserBillsSerializer(bills, many=True, context={'user': 1})
+        active_bills_data = {'user bills': serializer.data}
         
+        response_data = {}
+        response_data.update(active_bills_data)
 
+        
+        return Response(response_data)
+        
+    
+    ### Functionality API
+        
 class RegisterView(APIView):
     permission_classes= [permissions.AllowAny]
     
