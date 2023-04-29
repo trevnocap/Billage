@@ -327,7 +327,7 @@ export function viewUserBillsRedirect(){
     const button = document.getElementById('view-user-bills')
 
     button.addEventListener('click', () =>{
-        window.location.href = `${baseURL}view-user-bills`
+        window.location.href = `${baseURL}view-user-bills/?display_count=12&page_number=1`
     });
 }
 

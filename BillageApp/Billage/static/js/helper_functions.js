@@ -187,3 +187,15 @@ export function getQueryParam(paramName) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(paramName);
 }
+
+export function updateURLParams(paramName, paramValue) {
+  const currentURL = window.location.href;
+  const url = new URL(currentURL);
+
+  const searchParams = new URLSearchParams(url.search);
+
+  searchParams.set(paramName, paramValue);
+  url.search = searchParams.toString();
+  history.replaceState(null, '', url.href);
+}
+

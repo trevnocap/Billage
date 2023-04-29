@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.permissions import IsAuthenticated
 
+from django.core.paginator import Paginator
+
 from .serializers import *
 
 #Reusable functions
@@ -27,12 +29,12 @@ def user_historical_bills_fetch(user_id, bill_count):
     
     return bills_to_return
 
-def user_bills_fetch(user_id, bill_count):
+def user_bills_fetch(user_id):
     active_bills_query = UserActiveBillDue.objects.filter(user = user_id)
     historical_bills_query = UserBillDetailsHistory.objects.filter(user = user_id)
     
     bills_list = list(active_bills_query) + list(historical_bills_query)
-    ordered_list = sorted(bills_list, key=lambda x: x.bill_due_date, reverse=True)[:bill_count]
+    ordered_list = sorted(bills_list, key=lambda x: x.bill_due_date, reverse=True)
     
     return ordered_list
 
@@ -116,14 +118,18 @@ class UserBillHistoryTableView(APIView):
     
     def get(self, request, display_count, page_number):
         user = request.user.id
-        bills = user_bills_fetch(user, display_count)
+        bills = user_bills_fetch(user)
         
-        #serializer = ViewUserBillsSerializer(bills, many=True, context={'user': request.user})
-        serializer = ViewUserBillsSerializer(bills, many=True, context={'user': 1})
-        active_bills_data = {'user_bills': serializer.data}
+        paginator = Paginator(bills, display_count)
+    
+        page = paginator.page(page_number)
+        
+        serializer = ViewUserBillsSerializer(page, many=True, context={'user': request.user})
+        bills_data = {'user_bills': serializer.data}
         
         response_data = {}
-        response_data.update(active_bills_data)
+        response_data.update(bills_data)
+        response_data['total_pages'] = paginator.num_pages
 
         
         return Response(response_data)
