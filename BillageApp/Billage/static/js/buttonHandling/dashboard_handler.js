@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     checkAccessTokenAndRedirectToLogin();
 });
 
+const baseURL = 'http://127.0.0.1:8000/'
+
 const mainElement = document.getElementById('main');
 const navbarElement = document.getElementById('navbar');
 
@@ -107,7 +109,7 @@ function handleCreateSubmission(){
             }
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/create-billage/', {
+                const response = await fetch(`${baseURL}/api/create-billage/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -162,7 +164,7 @@ function handleJoinSubmission(){
             }
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/join-billage/', {
+                const response = await fetch(`${baseURL}api/join-billage/`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -308,7 +310,7 @@ function signOut() {
       });
     }
   
-    window.location.href = 'http://127.0.0.1:8000/'
+    window.location.href = baseURL
 }
 
 function signOutButtonHandler(){
@@ -320,3 +322,12 @@ function signOutButtonHandler(){
 
 billageButtonsHandler();
 signOutButtonHandler();
+
+export function viewUserBillsRedirect(){
+    const button = document.getElementById('view-user-bills')
+
+    button.addEventListener('click', () =>{
+        window.location.href = `${baseURL}view-user-bills`
+    });
+}
+

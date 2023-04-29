@@ -1,6 +1,8 @@
 import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt, getQueryParam, checkAccessTokenAndRedirectToLogin } from "./helper_functions.js"
 import { handleButtons, changeBillageNameButton, changeBillageImageButton } from "./buttonHandling/manage_billage_handler.js";
 
+const baseURL = 'http://127.0.0.1:8000/'
+
 document.addEventListener("DOMContentLoaded", () => {
   checkAccessTokenAndRedirectToLogin();
 });
@@ -20,7 +22,7 @@ mainElement.style.display = 'none';
 navbarElement.style.display = 'none';
 loadingIconElement.style.display = 'flex';
 
-fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
+fetch(`${baseURL}api/manage-billage/${billageId}`, {
   method: 'GET',
   headers: {
     'Content-Type': 'application/json',
@@ -28,12 +30,11 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
   }
 }).then(response => {
   if (!response.ok){
-    window.location.href = 'http://127.0.0.1:8000/dashboard';
+    window.location.href = `${baseURL}dashboard`;
   }else{
     return response.json();
   }
 }).then(data => {
-    console.log(data)
     let userIdIsAdmin = false;
     // Billage Details;
     const billageDetailsContainer = document.getElementById('billage-details');
@@ -66,6 +67,7 @@ fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}`, {
     const editNameButton = document.createElement('a');
     editNameButton.id = 'change-name'
     editNameButton.classList.add('edit-name-button');
+    editNameButton.style.cursor = 'pointer';
 
     const editIcon = document.createElement('img');
     editIcon.src = '/images/edit_pencil.png';

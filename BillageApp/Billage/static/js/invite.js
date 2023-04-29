@@ -1,5 +1,7 @@
 import { checkAccessTokenAndRedirectToLogin, parseJwt, Popup } from './helper_functions.js';
 
+const baseURL = 'http://127.0.0.1:8000/'
+
 const navbarElement = document.getElementById('navbar');
 
 const popUp = new Popup([navbarElement], {
@@ -48,14 +50,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 button.disabled = true;
                 await joinBillage(linkUUID, userID);
             }else{
-                window.location.href = 'http://127.0.0.1:8000/dashboard';
+                window.location.href = `${baseURL}dashboard`;
             }
         });
     });
 });
 
 async function joinBillage(linkUUID, userID) {
-    const url = 'http://127.0.0.1:8000/api/join-billage/';
+    const url = `${baseURL}api/join-billage/`;
     const data = {
         link_uuid: linkUUID,
         user_id: userID
@@ -73,7 +75,7 @@ async function joinBillage(linkUUID, userID) {
         if (response.ok) {
             const jsonResponse = await response.json();
             console.log(jsonResponse.message);
-            window.location.href = 'http://127.0.0.1:8000/dashboard';
+            window.location.href = `${baseURL}dashboard`;
         }else if (response.status === 400){
             errorHandler.textContent = 'You cannot join a Billage that you are already in!'
             errorHandler.style.display = 'block';
@@ -81,7 +83,7 @@ async function joinBillage(linkUUID, userID) {
                 button.disabled = true;
             });
             setTimeout(() => {
-                window.location.href = 'http://127.0.0.1:8000/dashboard'
+                window.location.href = `${baseURL}dashboard`
               }, 3000); 
         }else if(response.status === 410){
             errorHandler.textContent = 'This shareable link is expired!'
@@ -90,7 +92,7 @@ async function joinBillage(linkUUID, userID) {
                 button.disabled = true;
             });
             setTimeout(() => {
-                window.location.href = 'http://127.0.0.1:8000/dashboard'
+                window.location.href = `${baseURL}dashboard`
               }, 3000);
         }else{
             console.error(`Error: ${response.status} ${response.statusText}`);

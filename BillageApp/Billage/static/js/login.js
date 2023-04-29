@@ -1,5 +1,7 @@
 import { parseJwt, checkAccessTokenAndRedirectToLogin } from "./helper_functions.js";
 
+const baseURL = 'http://127.0.0.1:8000/'
+
 document.addEventListener("DOMContentLoaded", () => {
   checkAccessTokenAndRedirectToLogin();
 });
@@ -14,7 +16,7 @@ loginForm.addEventListener('submit', (event) => {
 });
 
 async function login(username, password) {
-  const response = await fetch("http://127.0.0.1:8000/api/auth/jwt/create/", {
+  const response = await fetch(`${baseURL}api/auth/jwt/create/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -31,7 +33,7 @@ async function login(username, password) {
     const user_id = decodedToken.user_id;
     console.log(user_id);
 
-    window.location.href = `http://127.0.0.1:8000/dashboard/`;
+    window.location.href = `${baseURL}dashboard/`;
   } else {
     const errorMessage = document.querySelector(".loginfailed");
     errorMessage.textContent = "Login failed. Please try again.";

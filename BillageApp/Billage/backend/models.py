@@ -26,7 +26,7 @@ def create_billage_id():
 #Defines a billage group and its members in which bills can be linked to
 class Billage(models.Model):
     billage_id = models.CharField(primary_key=True, max_length=8, default=create_billage_id, editable=False)
-    billage_image = models.ImageField(default="villageicon.png")
+    billage_image = models.ImageField(default="billageimages/villageicon.png")
     billage_members = models.ManyToManyField(User)
     billage_admins = models.ManyToManyField(User, related_name='administered_billages')
     billage_name = models.CharField(max_length=20, null=False)
@@ -184,6 +184,9 @@ class UserActiveBillDue(models.Model):
     bill_due_date = models.DateField(auto_now=False)
     bill_status = models.CharField(max_length=20, choices = BILL_STATUSES, default= 'pending payment')
     payment_method = models.ForeignKey(UserPaymentMethod, on_delete=models.SET_NULL, null=True)
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.linked_bill.billage_link.billage_name} - {self.linked_bill.bill_provider_name} - {self.bill_due_date}"
     
     
 #Shows user level history of bills which have been paid

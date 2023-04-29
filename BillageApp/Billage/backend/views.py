@@ -114,12 +114,13 @@ class ManageBillageDashboardView(APIView):
 class UserBillHistoryTableView(APIView):
     permission_classes= [permissions.AllowAny]
     
-    def get(self, request, user_id, display_count, page_number):
-        bills = user_bills_fetch(user_id, display_count)
+    def get(self, request, display_count, page_number):
+        user = request.user.id
+        bills = user_bills_fetch(user, display_count)
         
         #serializer = ViewUserBillsSerializer(bills, many=True, context={'user': request.user})
         serializer = ViewUserBillsSerializer(bills, many=True, context={'user': 1})
-        active_bills_data = {'user bills': serializer.data}
+        active_bills_data = {'user_bills': serializer.data}
         
         response_data = {}
         response_data.update(active_bills_data)

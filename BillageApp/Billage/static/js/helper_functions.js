@@ -1,3 +1,6 @@
+const baseURL = 'http://127.0.0.1:8000/'
+
+
 export function parseJwt (token) {
     try{
         var base64Url = token.split('.')[1];
@@ -8,7 +11,7 @@ export function parseJwt (token) {
     
         return JSON.parse(jsonPayload);
     }catch(e){
-        window.location.href = `http://127.0.0.1:8000/`;
+        window.location.href = baseURL;
     }
     
   }
@@ -19,7 +22,7 @@ export function checkAccessTokenAndRedirectToLogin() {
 
   if (!accessToken) {
     if (window.location.pathname !== "/") {
-      window.location.href = "http://127.0.0.1:8000/";
+      window.location.href = baseURL;
     }
     return;
   }
@@ -32,10 +35,10 @@ export function checkAccessTokenAndRedirectToLogin() {
     localStorage.removeItem("refresh_token");
 
     if (window.location.pathname !== "/") {
-      window.location.href = "http://127.0.0.1:8000/";
+      window.location.href = baseURL;
     }
   } else if (window.location.pathname === "/") {
-    window.location.href = "http://127.0.0.1:8000/dashboard";
+    window.location.href = `${baseURL}dashboard`;
   }
 }
 

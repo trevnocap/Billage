@@ -1,5 +1,7 @@
-const loginForm = document.getElementById('register-form');
 
+const baseURL = 'http://127.0.0.1:8000/'
+
+const loginForm = document.getElementById('register-form');
 
 loginForm.addEventListener('submit', async (event) => {
   event.preventDefault(); // prevent the form from submitting normally
@@ -10,7 +12,7 @@ loginForm.addEventListener('submit', async (event) => {
   const password = document.getElementById('password-input').value;
 
 
-const response = await fetch('http://127.0.0.1:8000/api/register/', {
+const response = await fetch(`${baseURL}api/register/`, {
     method: 'POST',
     headers: {
     'Content-Type': 'application/json'
@@ -20,7 +22,7 @@ const response = await fetch('http://127.0.0.1:8000/api/register/', {
 
 if (response.ok) {
     // redirect the user to a new page
-    window.location.href = 'http://127.0.0.1:8000/login/';
+    window.location.href = `${baseURL}login/`;
 } else {
     // handle the error
     const errorMessage = document.querySelector('.registerfailed');

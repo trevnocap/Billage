@@ -24,6 +24,9 @@ def register_view(request):
 def manage_billage_view(request):
     return render(request, 'frontend/manage-billage.html')
 
+def view_user_bills(request):
+    return render(request, 'frontend/view-user-bills.html')
+
 from django.views import View
 
 class InviteView(View):

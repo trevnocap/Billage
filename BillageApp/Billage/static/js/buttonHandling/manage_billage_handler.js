@@ -1,5 +1,7 @@
 import { Popup, getQueryParam } from "../helper_functions.js";
 
+const baseURL = 'http://127.0.0.1:8000/'
+
 const token = localStorage.getItem('access_token');
 
 const mainElement = document.getElementById('main');
@@ -100,7 +102,7 @@ export function handleButtons(){
 async function removeUser(userID) {
   const errorMessage = document.getElementById('error-message');
 
-  await fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}/remove-user/${userID}/`, {
+  await fetch(`${baseURL}api/manage-billage/${billageId}/remove-user/${userID}/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -138,7 +140,7 @@ async function removeUser(userID) {
 
 async function promoteUser(id) {
   const errorMessage = document.getElementById('error-message');
-  await fetch(`http://127.0.0.1:8000/api/manage-billage/${billageId}/promote-user/${id}/`, {
+  await fetch(`${baseURL}api/manage-billage/${billageId}/promote-user/${id}/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -269,7 +271,7 @@ export function changeBillageNameButton(leftColumn) {
 }
 
 function changeBillageName(billageID, newName){
-  fetch(`http://127.0.0.1:8000/api/manage-billage/change-name/${billageID}/${newName}`, {
+  fetch(`${baseURL}api/manage-billage/change-name/${billageID}/${newName}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -385,7 +387,7 @@ function changeBillageImage(imageFile) {
   formData.append('billage_id', billageId);
   formData.append('billage_image', imageFile);
 
-  fetch(`http://127.0.0.1:8000/api/manage-billage/change-image/${billageId}`, {
+  fetch(`${baseURL}api/manage-billage/change-image/${billageId}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`,

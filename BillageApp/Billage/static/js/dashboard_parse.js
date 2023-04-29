@@ -1,10 +1,11 @@
-import { billageButtonsHandler } from './buttonHandling/dashboard_handler.js';
+import { billageButtonsHandler, viewUserBillsRedirect } from './buttonHandling/dashboard_handler.js';
 import { checkAccessTokenAndRedirectToLogin, parseJwt, getBillageCardBootstrapClass, returnIcon, formatDate } from "./helper_functions.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   checkAccessTokenAndRedirectToLogin();
 });
 
+const baseURL = 'http://127.0.0.1:8000/'
 
 const accessToken = localStorage.getItem('access_token');
 
@@ -22,7 +23,7 @@ navbarElement.style.display = 'none';
 loadingIconElement.style.display = 'flex';
 
 
-fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
+fetch(`${baseURL}api/dashboardview/${user_id}`)
   .then(response => response.json())
   .then(data => {
     //User Data
@@ -118,6 +119,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
 
       const allBillsButton = document.createElement('button')
       allBillsButton.classList.add('btn-info', 'btn-sm', 'ml-4')
+      allBillsButton.id = 'view-user-bills'
       allBillsButton.innerHTML = 'View All Bills'
 
       finalRow.appendChild(allBillsButton)
@@ -146,6 +148,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
     }
     else{
       createBillActivityTable(active_bills)
+      viewUserBillsRedirect()
     }
 
     
@@ -185,7 +188,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
             <img src="${billage.billage_image}" alt="${billage.billage_name}" class="billage-icon" />
             <h5>${billage.billage_name}</h5>
             <p>${billage.billage_members.length} members</p>
-            <a class="btn btn-primary btn-sm mt-2" href = "http://127.0.0.1:8000/manage-billage/?billage_id=${billage.billage_id}">Manage Billage</a>
+            <a class="btn btn-primary btn-sm mt-2" href = "${baseURL}manage-billage/?billage_id=${billage.billage_id}">Manage Billage</a>
           `;
     
           card.innerHTML = cardContent;
@@ -251,7 +254,7 @@ fetch(`http://127.0.0.1:8000/api/dashboardview/${user_id}`)
         <img src="${billage.billage_image}" alt="${billage.billage_name}" class= "billage-icon" />
         <h5>${billage.billage_name}</h5>
         <p>${billage.billage_members.length} members</p>
-        <a class="btn btn-primary btn-sm mt-2" href = "http://127.0.0.1:8000/manage-billage/?billage_id=${billage.billage_id}">Manage Billage</a>
+        <a class="btn btn-primary btn-sm mt-2" href = "${baseURL}manage-billage/?billage_id=${billage.billage_id}">Manage Billage</a>
         `;
 
         card.innerHTML = cardContent;

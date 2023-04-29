@@ -161,11 +161,6 @@ class ViewUserBillsSerializer(serializers.Serializer):
                     return user_linked_bill_split.split_percentage
             return None
             
-    class BillageBillDataSerialier(serializers.ModelSerializer):
-        class Meta:
-            model = BillageBill
-            exclude = ('date_created', 'linked_bill', 'bill_id', 'bill_due_date',)
-            
     class PaymentMethodDataSerializer(serializers.ModelSerializer):
         class Meta:
             model = UserPaymentMethod
@@ -176,5 +171,4 @@ class ViewUserBillsSerializer(serializers.Serializer):
     bill_status = serializers.CharField(max_length=50) 
     date_closed = serializers.DateField(allow_null=True)       
     linked_bill = LinkedBillDataSerialier(read_only=True)
-    billage_bill = BillageBillDataSerialier(read_only=True)
     payment_method = PaymentMethodDataSerializer(read_only=True)
