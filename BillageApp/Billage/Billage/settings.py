@@ -102,10 +102,10 @@ WSGI_APPLICATION = 'Billage.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'trevnocap/BillageApp',
-        'USER': 'trevnocap',
-        'PASSWORD': 'v2_3zibZ_6aizzLdRjepuYL2jsWvKwiC',
-        'HOST': 'db.bit.io',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': "9EvSr_t#%9gi6J6",
+        'HOST': 'db.rbdapmfxrujunnbvndas.supabase.co',
         'PORT': '5432',
     }
 }

@@ -141,7 +141,6 @@ class BillageBill(models.Model):
     BILL_STATUSES = (
         ('paid', 'paid'),
         ('pending payment', 'pending payment'),
-        ('failed payment', 'failed payment'),
         ('canceled', 'canceled')
     )
         
@@ -172,7 +171,6 @@ class UserActiveBillDue(models.Model):
     BILL_STATUSES = (
         ('paid', 'paid'),
         ('pending payment', 'pending payment'),
-        ('failed payment', 'failed payment'),
         ('canceled', 'canceled')
     )
     

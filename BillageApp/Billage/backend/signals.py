@@ -3,9 +3,9 @@ from django.dispatch import receiver
 from .models import *
 from django.contrib.auth.models import User
 
-
+#When a BillageBill is created a the corresponding useractivebills are also created
 @receiver(post_save, sender=BillageBill)
-def create_user_bill_due_amount(sender, instance, created, **kwargs):
+def create_useractivebill(sender, instance, created, **kwargs):
     if created:
         bill_splits = LinkedBillSplit.objects.filter(bill_being_split= instance.linked_bill)
         for split in bill_splits:
@@ -19,10 +19,11 @@ def create_user_bill_due_amount(sender, instance, created, **kwargs):
                 bill_due_date = instance.bill_due_date,
                 payment_method = split.payment_method
                 )
-            
+
+#When a useractivebill status is changed for soemthing other than pending payment, the history object is created
 @receiver(post_save, sender = UserActiveBillDue)
 def handle_bill_status_change(sender, instance, **kwargs):
-    if instance.pk and instance.bill_status != 'pending payment':
+    if instance.bill_status != 'pending payment':
         bill_history = UserBillDetailsHistory(
             user = instance.user,
             linked_bill = instance.linked_bill,
@@ -36,6 +37,18 @@ def handle_bill_status_change(sender, instance, **kwargs):
         bill_history.save()
         instance.delete()
         
+#If the status of an existing Billage bill is updated, the corresponding useractivebills are updated to the same status        
+@receiver(post_save, sender = BillageBill)
+def update_useractivebills_for_billagebill_status_change(sender, instance, created, **kwargs):
+    if not created:
+        userbills = UserActiveBillDue.objects.filter(billage_bill_id = instance.pk)
+        
+        if not userbills:
+            print(f'no userbills for billage bill {instance.pk}')
+        
+        for bill in userbills:
+            bill.bill_status = instance.bill_status
+            bill.save()
 
 
 
