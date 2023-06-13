@@ -44,11 +44,26 @@ def update_useractivebills_for_billagebill_status_change(sender, instance, creat
         userbills = UserActiveBillDue.objects.filter(billage_bill_id = instance.pk)
         
         if not userbills:
-            print(f'no userbills for billage bill {instance.pk}')
+            return 'No user bills'
         
         for bill in userbills:
             bill.bill_status = instance.bill_status
             bill.save()
+
+
+#If a Linked Bill is set to inactive, all useractivebills and billagebills are canceled
+@receiver(post_save, sender = LinkedBill)
+def update_active_bills_for_deleted_linkedbill(sender, instance, created, **kwargs):
+    if not created:
+        linked_bill = LinkedBill.objects.get(pk=instance.pk)
+        
+        if linked_bill.is_active == True:
+            return
+        
+        UserActiveBillDue.objects.exclude(bill_status = 'paid').filter(linked_bill=linked_bill).update(bill_status = 'canceled')
+        BillageBill.objects.exclude(bill_status = 'paid').filter(linked_bill=linked_bill).update(bill_status = 'canceled')
+    
+    
 
 
 

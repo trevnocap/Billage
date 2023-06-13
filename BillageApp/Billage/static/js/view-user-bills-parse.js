@@ -28,7 +28,6 @@ fetch(`${baseURL}api/view-user-bills/${displayCount}/${pageNumber}`, {
         return response.json();
       }
 }).then(data => {
-    console.log(data);
     const tableWrapper = document.getElementById('table-wrapper');
     const bills = data.user_bills;
 

@@ -5,7 +5,7 @@ from django.test import TestCase
 import requests
 import json
 
-url = 'http://127.0.0.1:8000/api/paymentmethods/13'
+url = 'http://127.0.0.1:8000/api/manage-billage/OG8O9VXW/link-bill'
 headers = {'Content-type': 'application/json'}
 
 data = {

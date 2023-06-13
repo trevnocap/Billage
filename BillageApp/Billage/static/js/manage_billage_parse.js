@@ -1,5 +1,5 @@
 import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt, getQueryParam, checkAccessTokenAndRedirectToLogin } from "./helper_functions.js"
-import { handleButtons, changeBillageNameButton, changeBillageImageButton } from "./buttonHandling/manage_billage_handler.js";
+import { handleButtons, changeBillageNameButton, changeBillageImageButton, removeLinkedBillButton} from "./buttonHandling/manage_billage_handler.js";
 
 const baseURL = 'http://127.0.0.1:8000/'
 
@@ -194,7 +194,7 @@ fetch(`${baseURL}api/manage-billage/${billageId}`, {
           <img src="${returnIcon(bill.bill_type)}" alt="${bill.bill_type}" class="bill-icon" />
           <h5>${bill.bill_provider_name}</h5>
           <p>${bill.bill_type}</p>
-          <button class="btn btn-warning btn-sm mt-2">Remove</button>
+          <button class="btn btn-warning btn-sm mt-2 remove-bill" id="${bill.linked_bill}">Remove</button>
           `;
     
           card.innerHTML = cardContent;
@@ -239,7 +239,7 @@ fetch(`${baseURL}api/manage-billage/${billageId}`, {
 
       const cardContent = `
       <p>This Billage does not have any linked bills yet, add one!</p>
-      <button class ="btn btn-primary btn-sm mt-3 create-billage-button">Add Bill</button>
+      <button class ="btn btn-primary btn-sm mt-3 add-linked-bill">Add Bill</button>
       `;
 
       card.innerHTML = cardContent;
@@ -256,9 +256,9 @@ fetch(`${baseURL}api/manage-billage/${billageId}`, {
         <img src="${returnIcon(bill.bill_type)}" alt="${bill.bill_type}" class="bill-icon" />
         <h5>${bill.bill_provider_name}</h5>
         <p>Bill Type: ${bill.bill_type}</p>
-        <button class="btn btn-warning btn-sm mt-2">Remove</button>
-        `;
-
+        <button class="btn btn-warning btn-sm mt-2 remove-bill" id="${bill.linked_bill}">Remove</button>
+      `;
+      
         card.innerHTML = cardContent;
 
         linkedBillsContainer.append(card);
@@ -365,6 +365,7 @@ fetch(`${baseURL}api/manage-billage/${billageId}`, {
     handleButtons();
     changeBillageNameButton(leftColumn);
     changeBillageImageButton();
+    removeLinkedBillButton();
 
   })
 
@@ -373,3 +374,5 @@ fetch(`${baseURL}api/manage-billage/${billageId}`, {
     navbarElement.style.display = 'flex';
     loadingIconElement.style.display = 'none';
   });
+
+

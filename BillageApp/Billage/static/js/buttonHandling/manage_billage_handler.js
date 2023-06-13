@@ -10,6 +10,7 @@ const loadingIconElement = document.getElementById('loading-icon');
 
 const billageId = getQueryParam('billage_id');
 
+
 const popUp = new Popup([mainElement, navbarElement, loadingIconElement], {
     closeButton: true,
     logo: true,
@@ -97,8 +98,6 @@ export function handleButtons(){
   });
 }
   
-
-
 async function removeUser(userID) {
   const errorMessage = document.getElementById('error-message');
 
@@ -115,7 +114,7 @@ async function removeUser(userID) {
           errorMessage.textContent = "User was successfully removed."
           setTimeout(() => {
               popUp.closePopUp();
-          }, 3000); 
+          }, 1000); 
       }else if (response.status === 404){
         errorMessage.style.color = 'red';
           errorMessage.style.display = 'block';
@@ -153,7 +152,7 @@ async function promoteUser(id) {
           errorMessage.textContent = "User was promoted to admin."
           setTimeout(() => {
               popUp.closePopUp();
-          }, 3000); 
+          }, 1000); 
       }else if (response.status === 400){
         errorMessage.style.color = 'red';
           errorMessage.style.display = 'block';
@@ -328,6 +327,7 @@ export function changeBillageImageButton() {
     changeImageButton.parentNode.insertBefore(saveButton, errorMessage.nextSibling);
     changeImageButton.parentNode.insertBefore(cancelButton, saveButton.nextSibling);
 
+
     let originalSrc = imageElement.src;
 
     input.addEventListener('change', (event) => {
@@ -399,3 +399,82 @@ function changeBillageImage(imageFile) {
   });
 }
 
+//remove linked bill
+function removeLinkedBill(billageId, linkedBill){
+  const errorMessage = document.getElementById('error-message');
+
+  fetch(`${baseURL}api/manage-billage/${billageId}/remove-linked-bill`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ 
+      linked_bill: linkedBill,
+    })
+  }).then(response =>{
+    if (response.status === 200){
+      console.log('BILL DELETED')
+      errorMessage.style.color = 'green';
+      errorMessage.style.display = 'block';
+      errorMessage.textContent = "This bill was removed"
+      setTimeout(() => {
+          popUp.closePopUp();
+      }, 1000); 
+    }else{
+      errorMessage.style.color = 'red';
+      errorMessage.style.display = 'block';
+      errorMessage.textContent = "We could not remove this bill at this time"
+      setTimeout(() => {
+          popUp.closePopUp();
+      }, 3000); 
+    }
+  })
+  .catch((error) => {
+    console.error('Error removing linked bill:', error);
+  });
+}
+
+
+export async function removeLinkedBillButton() {
+  const removeButtons = document.querySelectorAll('.remove-bill');
+
+  removeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      popUp.elements.forEach(element => {element.style.filter = 'blur(7px)'});
+      const linkedBillId = button.id;
+
+      const h2 = "Are you sure you want to remove this bill?";
+
+      const content = `
+        <div class="row mx-2">
+            <div class="col col-md-8 d-flex flex-column justify-content-center align-items-left">
+                <h2>${h2}</h2>
+                <div class="form-group mt-3">
+                    <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
+                </div>
+                    <div class="d-flex justify-content-between">
+                    <button class='btn btn-warning w-100 mb-5 mr-2 answer-button' id='yes-button'">Yes</button>
+                    <button class='btn btn-primary w-100 mb-5 answer-button' id='no-button'">No</button>
+                </div>
+            </div>
+            <div class="col col-md-4 d-flex flex-column align-items-center">
+                <p>• This action cannot be undone!</p>
+            </div>
+        </div>
+    `;
+      popUp.setContent(content);
+
+      const answers = document.querySelectorAll('.answer-button');
+      answers.forEach(answer => {
+        answer.addEventListener('click', () => {
+          if (answer.id === 'yes-button'){
+            removeLinkedBill(billageId, button.id);
+            popUp.shouldReload = true;
+          }else{
+            popUp.closePopUp();
+          }
+        
+    })
+  });
+})})}

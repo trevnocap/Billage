@@ -16,6 +16,8 @@ urlpatterns = [
     path('manage-billage/<str:billage_id>/promote-user/<str:user_id>/', PromoteUserToAdminView.as_view(), name='promote_user_to_admin'),
     path('manage-billage/change-name/<str:billage_id>/<str:new_name>', ChangeBillageNameView.as_view(), name='change_billage_name'),
     path('manage-billage/change-image/<str:billage_id>', ChangeBillageImageView.as_view(), name='change_billage_image'),
+    path('manage-billage/<str:billage_id>/add-linked-bill', AddLinkedBill.as_view(), name = 'add_linked_bill' ),
+    path('manage-billage/<str:billage_id>/remove-linked-bill', RemoveLinkedBill.as_view(), name = 'remove_linked_bill' ),
     
     path('view-user-bills/<int:display_count>/<int:page_number>', UserBillHistoryTableView.as_view(), name='user_bill_history'),
     

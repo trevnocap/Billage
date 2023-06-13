@@ -31,6 +31,7 @@ class Billage(models.Model):
     billage_admins = models.ManyToManyField(User, related_name='administered_billages')
     billage_name = models.CharField(max_length=20, null=False)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
+    is_active = models.BooleanField(default=True)
     
     def __str__(self):
         return self.billage_name
@@ -129,8 +130,8 @@ class LinkedBill(models.Model):
     billage_link = models.ForeignKey(Billage, on_delete=models.CASCADE)
     bill_type = models.CharField(max_length=20, choices=BILL_TYPES, null=False, blank=False)
     bill_provider_name = models.CharField(max_length=100, null=False, blank=False)
-    
     date_created = models.DateField(auto_now_add=True, null=True)
+    is_active = models.BooleanField(default=True)
     
     def __str__(self):
         return f"{self.billage_link.billage_name} - {self.bill_provider_name}"

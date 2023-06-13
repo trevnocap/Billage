@@ -2,7 +2,7 @@ from datetime import timedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 from django.core.paginator import Paginator
 
@@ -18,7 +18,7 @@ def payment_methods_fetch(user_id):
         return payment_method_data
 
 def user_active_bills_fetch(user_id, bill_count):
-    active_bills_query = UserActiveBillDue.objects.filter(user = user_id)
+    active_bills_query = UserActiveBillDue.objects.filter(user = user_id, bill_status = 'pending payment')
     bills_to_return = active_bills_query.order_by('bill_due_date')[:bill_count]
     
     return bills_to_return
@@ -93,7 +93,7 @@ class ManageBillageDashboardView(APIView):
         
         
         #linked Bills
-        linked_bills = LinkedBill.objects.filter(billage_link = billage_id)
+        linked_bills = LinkedBill.objects.filter(billage_link = billage_id, is_active = True)
         serializer = ManageViewLinkedBillSerializer(linked_bills, many= True)
         linked_bill_data = {'linked_bills': serializer.data}
         
@@ -131,7 +131,6 @@ class UserBillHistoryTableView(APIView):
         response_data.update(bills_data)
         response_data['total_pages'] = paginator.num_pages
 
-        
         return Response(response_data)
         
     
@@ -334,4 +333,54 @@ class CreateShareableLink(APIView):
 
         return Response(serialized_data)
     
+class AddLinkedBill(APIView):
+    #permission_classes = (IsAuthenticated, IsAdminUser,)
+    permission_classes = (AllowAny,)
+    
+    def post(self, request, billage_id):
+        try:
+            billage = get_object_or_404(Billage, pk= billage_id)
+        except:
+            return Response({'detail': f'Billage: {billage_id} not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = LinkedBillSerializer(data=request.data)
+    
+        # if request.user not in billage.billage_members.all():
+        #     return Response({'detail': 'You are not a member of this Billage.'}, status=status.HTTP_403_FORBIDDEN)
+        if not serializer.is_valid():
+            return Response({'detail': 'Invalid Request, review supported bill_types and bill_provider_name validations'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        linked_bill = LinkedBill.objects.create(
+                billage_link = serializer.validated_data['billage_link'],
+                bill_type = serializer.validated_data['bill_type'],
+                bill_provider_name = serializer.validated_data['bill_provider_name'],
+                is_active = True
+        )
+        
+        linked_bill.save()
+        bill_json = LinkedBillSerializer(linked_bill)
+        
+        return Response({"created":bill_json.data}, status= status.HTTP_201_CREATED)
 
+class RemoveLinkedBill(APIView):
+    permission_classes = (IsAuthenticated, IsAdminUser,)
+    
+    def post(self, request, billage_id):
+        try:
+            billage = get_object_or_404(Billage, pk= billage_id)
+        except:
+            return Response({'detail': f'Billage: {billage_id} not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if request.user not in billage.billage_members.all():
+            return Response({'detail': 'You are not a member of this Billage and cannot modify linked bills.'}, status=status.HTTP_403_FORBIDDEN)
+        
+        linked_bill_to_remove = request.data['linked_bill']
+        
+        try:
+            linked_bill = LinkedBill.objects.get(pk = linked_bill_to_remove)
+            linked_bill.is_active = False
+            linked_bill.save()
+            return Response({"removed":linked_bill_to_remove}, status= status.HTTP_200_OK)
+        except:
+            return Response({'detail': f'Linked Bill: {linked_bill_to_remove} not found'}, status=status.HTTP_404_NOT_FOUND)
+        
