@@ -478,3 +478,103 @@ export async function removeLinkedBillButton() {
     })
   });
 })})}
+
+
+function addLinkedBill(billProvider, billType) {
+  const errorMessage = document.getElementById('error-message');
+
+  if (!billProvider) {
+    errorMessage.style.color = 'red';
+    errorMessage.style.display = 'block';
+    errorMessage.textContent = "You must provide a name for the Bill Provider"
+    return
+  }else {
+    fetch(`${baseURL}api/manage-billage/${billageId}/add-linked-bill`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ 
+        billage_link: billageId,
+        bill_type: billType,
+        bill_provider_name: billProvider,
+      })
+    }).then(response =>{
+      if (response.status === 201){
+        console.log('BILL DELETED')
+        errorMessage.style.color = 'green';
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = "This bill was added"
+        setTimeout(() => {
+            popUp.shouldReload = true;
+        }, 1000); 
+      }else{
+        errorMessage.style.color = 'red';
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = "We could not remove this bill at this time"
+        setTimeout(() => {
+            popUp.closePopUp();
+        }, 3000); 
+      }
+    })
+    .catch((error) => {
+      console.error('Error removing linked bill:', error);
+    });
+  }
+}
+
+
+export async function addLinkedBillButton() {
+  const addBillButton = document.querySelectorAll('.add-linked-bill')
+  addBillButton.forEach(button => {
+    button.addEventListener('click', () => {
+      popUp.elements.forEach(element => {element.style.filter = 'blur(7px)'});
+
+      const h2 = "Add Your Bill";
+
+      const content = `
+      <div class="row mx-2">
+        <div class="col col-md-12 d-flex flex-column justify-content-center align-items-left">
+            <h2>${h2}</h2>
+            <div class="form-group mt-2">
+              <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
+
+              <label for="bill-provider-name">Bill Provider:</label>
+              <input id="bill-provider-input" type="text" class="form-control">
+
+              <label for="bill-type">Bill Type:</label>
+              <select id="bill-type-input" class="form-control">
+                <option value="Rent">Rent</option>
+                <option value="Electric">Electric</option>
+                <option value="Internet">Internet</option>
+                <option value="Streaming">Streaming</option>
+                <option value="Cable">Cable</option>
+                <option value="Water">Water</option>
+                <option value="Gas">Gas</option>
+                <option value="Other">Other</option>
+    
+              </select>
+
+            </div>
+                <div class="d-flex justify-content-between">
+                  <button class='btn btn-primary w-100 mb-4 answer-button' id='yes-button'">Next</button>
+                <div>
+            </div>
+        </div>
+      </div>
+      `;
+
+      popUp.setContent(content);
+
+      document.getElementById('yes-button').addEventListener('click', function() {
+        const billProvider = document.getElementById('bill-provider-input').value;
+        const billType = document.getElementById('bill-type-input').value;
+        
+        addLinkedBill(billProvider, billType);
+      });
+      
+
+    })
+  })
+}

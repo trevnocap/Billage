@@ -121,9 +121,11 @@ class LinkedBill(models.Model):
         ('Rent', 'Rent'),
         ('Gas', 'Gas'),
         ('Water', 'Water'),
-        ('cable', 'cable'),
-        ('streaming', "streaming"),
+        ('Cable', 'Cable'),
+        ('Streaming', "Streaming"),
         ('Internet', 'Internet'),
+        ('Other', 'Other'),
+        
         )
     
     linked_bill = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

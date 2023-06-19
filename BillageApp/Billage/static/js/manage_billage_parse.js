@@ -1,5 +1,5 @@
 import { getBillageCardBootstrapClass, returnIcon, formatDate, parseJwt, getQueryParam, checkAccessTokenAndRedirectToLogin } from "./helper_functions.js"
-import { handleButtons, changeBillageNameButton, changeBillageImageButton, removeLinkedBillButton} from "./buttonHandling/manage_billage_handler.js";
+import { handleButtons, changeBillageNameButton, changeBillageImageButton, removeLinkedBillButton, addLinkedBillButton} from "./buttonHandling/manage_billage_handler.js";
 
 const baseURL = 'http://127.0.0.1:8000/'
 
@@ -234,6 +234,10 @@ fetch(`${baseURL}api/manage-billage/${billageId}`, {
 
     if (linkedBills.length === 0) {
       // no linked bills
+      document.getElementById('add-bill-top-button').style.display = 'none';
+      const linkedBillHeader = document.getElementById('linked-bill-header')
+      linkedBillHeader.classList.add('mt-3')
+
       const card = document.createElement('div');
       card.classList.add('billage_card', 'text-center', billColClass[0], billColClass[1],);
 
@@ -366,6 +370,7 @@ fetch(`${baseURL}api/manage-billage/${billageId}`, {
     changeBillageNameButton(leftColumn);
     changeBillageImageButton();
     removeLinkedBillButton();
+    addLinkedBillButton();
 
   })
 
