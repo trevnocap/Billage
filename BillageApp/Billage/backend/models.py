@@ -62,6 +62,7 @@ class UserPaymentMethod(models.Model):
     user =  models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
     payment_type = models.CharField(max_length=20, choices=PAYMENT_TYPES)
+    is_default = models.BooleanField(default=True)
     
     def __str__(self):
         return f"{self.user.username} - {self.payment_type}"
@@ -134,6 +135,12 @@ class LinkedBill(models.Model):
     bill_provider_name = models.CharField(max_length=100, null=False, blank=False)
     date_created = models.DateField(auto_now_add=True, null=True)
     is_active = models.BooleanField(default=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.linked_bill:
+            self.linked_bill = uuid.uuid4()
+        super().save(*args, **kwargs)
+
     
     def __str__(self):
         return f"{self.billage_link.billage_name} - {self.bill_provider_name}"

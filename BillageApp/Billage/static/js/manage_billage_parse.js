@@ -370,7 +370,7 @@ fetch(`${baseURL}api/manage-billage/${billageId}`, {
     changeBillageNameButton(leftColumn);
     changeBillageImageButton();
     removeLinkedBillButton();
-    addLinkedBillButton();
+    addLinkedBillButton(billageMembers, user_id, token);
 
   })
 

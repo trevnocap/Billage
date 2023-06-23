@@ -198,4 +198,3 @@ export function updateURLParams(paramName, paramValue) {
   url.search = searchParams.toString();
   history.replaceState(null, '', url.href);
 }
-

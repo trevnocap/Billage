@@ -21,6 +21,8 @@ urlpatterns = [
     
     path('view-user-bills/<int:display_count>/<int:page_number>', UserBillHistoryTableView.as_view(), name='user_bill_history'),
     
+    path('user-payment-methods/<int:user_id>', UserPaymentMethods.as_view(), name='user-payment-methods'),
+    
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 ]

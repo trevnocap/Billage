@@ -104,11 +104,17 @@ class ManageBillageDashboardView(APIView):
         serializer = ManageViewBillageBillSerializer(billage_bills_to_display, many=True)
         billage_bill_data = {'billage_bills': serializer.data}
         
+        #User Payment Method
+        payment_methods_data = payment_methods_fetch(request.user.id)
+        
         #response
         response_data = {}
         response_data.update(billage_data)
         response_data.update(linked_bill_data)
         response_data.update(billage_bill_data)
+        response_data.update(payment_methods_data)
+        
+        
         
         return Response(response_data)
         
@@ -350,13 +356,27 @@ class AddLinkedBill(APIView):
         if not serializer.is_valid():
             return Response({'detail': 'Invalid Request, review supported bill_types and bill_provider_name validations'}, status=status.HTTP_400_BAD_REQUEST)
         
+        
+        if 'linked_bill' not in serializer.validated_data:
+            linked_bill = LinkedBill.objects.create(
+                    billage_link = serializer.validated_data['billage_link'],
+                    bill_type = serializer.validated_data['bill_type'],
+                    bill_provider_name = serializer.validated_data['bill_provider_name'],
+                    is_active = True
+            )
+            linked_bill.save()
+            bill_json = LinkedBillSerializer(linked_bill)
+            
+            return Response({"created":bill_json.data}, status= status.HTTP_201_CREATED)
+            
         linked_bill = LinkedBill.objects.create(
+                linked_bill = serializer.validated_data['linked_bill'],
                 billage_link = serializer.validated_data['billage_link'],
                 bill_type = serializer.validated_data['bill_type'],
                 bill_provider_name = serializer.validated_data['bill_provider_name'],
                 is_active = True
         )
-        
+            
         linked_bill.save()
         bill_json = LinkedBillSerializer(linked_bill)
         
@@ -384,3 +404,20 @@ class RemoveLinkedBill(APIView):
         except:
             return Response({'detail': f'Linked Bill: {linked_bill_to_remove} not found'}, status=status.HTTP_404_NOT_FOUND)
         
+
+class UserPaymentMethods(APIView):
+    #permission_classes = (IsAuthenticated, IsAdminUser,)
+    permission_classes = (AllowAny,)
+    
+    def get(self, request, user_id):
+        try:
+            user = get_object_or_404(User, pk=user_id)
+        except:
+            return Response({'detail': f'User: {user_id} not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if request.user.id != user_id:
+            return Response({'detail': f'You cannot view the requested users payment methods'}, status=status.HTTP_403_FORBIDDEN)
+        
+        return Response(payment_methods_fetch(user_id), status=status.HTTP_200_OK)
+
+    

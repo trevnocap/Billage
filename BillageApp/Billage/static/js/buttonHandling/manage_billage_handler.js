@@ -1,4 +1,6 @@
 import { Popup, getQueryParam } from "../helper_functions.js";
+import {v4 as uuidv4} from '../uuid/dist/esm-browser/index.js';
+
 
 const baseURL = 'http://127.0.0.1:8000/'
 
@@ -435,7 +437,6 @@ function removeLinkedBill(billageId, linkedBill){
   });
 }
 
-
 export async function removeLinkedBillButton() {
   const removeButtons = document.querySelectorAll('.remove-bill');
 
@@ -480,53 +481,143 @@ export async function removeLinkedBillButton() {
 })})}
 
 
-function addLinkedBill(billProvider, billType) {
+function addLinkedBill(billProvider, billType, uuid) {
   const errorMessage = document.getElementById('error-message');
 
-  if (!billProvider) {
-    errorMessage.style.color = 'red';
-    errorMessage.style.display = 'block';
-    errorMessage.textContent = "You must provide a name for the Bill Provider"
-    return
-  }else {
-    fetch(`${baseURL}api/manage-billage/${billageId}/add-linked-bill`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ 
-        billage_link: billageId,
-        bill_type: billType,
-        bill_provider_name: billProvider,
-      })
-    }).then(response =>{
-      if (response.status === 201){
-        console.log('BILL DELETED')
-        errorMessage.style.color = 'green';
-        errorMessage.style.display = 'block';
-        errorMessage.textContent = "This bill was added"
-        setTimeout(() => {
-            popUp.shouldReload = true;
-        }, 1000); 
-      }else{
-        errorMessage.style.color = 'red';
-        errorMessage.style.display = 'block';
-        errorMessage.textContent = "We could not remove this bill at this time"
-        setTimeout(() => {
-            popUp.closePopUp();
-        }, 3000); 
-      }
+  fetch(`${baseURL}api/manage-billage/${billageId}/add-linked-bill`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ 
+      linked_bill: uuid,
+      billage_link: billageId,
+      bill_type: billType,
+      bill_provider_name: billProvider,
     })
-    .catch((error) => {
-      console.error('Error removing linked bill:', error);
-    });
-  }
+  }).then(response =>{
+    if (response.status === 201){
+      errorMessage.style.color = 'green';
+      errorMessage.style.display = 'block';
+      errorMessage.textContent = "This bill was added"
+      setTimeout(() => {
+          popUp.shouldReload = true;
+          popUp.closePopUp();
+      }, 1000);
+      return response.data
+    }else{
+      errorMessage.style.color = 'red';
+      errorMessage.style.display = 'block';
+      errorMessage.textContent = "We could not remove this bill at this time"
+      setTimeout(() => {
+          popUp.closePopUp();
+      }, 3000); 
+    }
+  })
+  .catch((error) => {
+    console.error('Error removing linked bill:', error);
+  });
 }
 
 
-export async function addLinkedBillButton() {
+
+function addLinkedBillSplitsPopUp(billageMembers, user_id) {
+
+  popUp.elements.forEach(element => {element.style.filter = 'blur(7px)'});
+
+      const h2 = "Set Your Bill Splits and Payment Method";
+
+      const content = `
+      <div class="row mx-2">
+      <div class="col col-md-12 d-flex flex-column justify-content-center align-items-left">
+        <h2>${h2}</h2>
+        <div class="mt-2 text-center" id="error-message" style="display: none; color: red;"></div>
+        <div class = "row">
+
+
+
+            <div class= "col col-md-6">
+              ${generateInputFields()} <!-- Generate the input fields dynamically -->
+            </div>
+            <div class= "col col-md-6">
+              <p>Test</p>
+            </div>
+
+  
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+          <button class='btn btn-primary w-25 mb-4 mr-2 answer-button' id='yes-button'">Add Bill</button>
+          <button class='btn btn-warning w-25 mb-4 answer-button' id='no-button'">Cancel</button>
+        </div>
+      </div>
+      </div>
+      `;
+
+      function generateInputFields() {
+        let inputFields = '';
+        Object.values(billageMembers).forEach(member => {
+          const { id, first_name } = member;
+
+          if (member.id === user_id){
+            inputFields += `<label for="member-${id}">You:</label>`;
+            inputFields += `<div class="input-group">`;
+            inputFields += `<input id="member-${id}" type="text" class="form-control">`;
+            inputFields += `<div class="input-group-append"><span class="input-group-text">%</span></div>`;
+            inputFields += `</div>`;
+
+          }else{
+          inputFields += `<label for="member-${id}">${first_name}:</label>`;
+          inputFields += `<div class="input-group">`;
+          inputFields += `<input id="member-${id}" type="text" class="form-control">`;
+          inputFields += `<div class="input-group-append"><span class="input-group-text">%</span></div>`;
+          inputFields += `</div>`;
+          }
+        });
+        return inputFields;
+      }
+
+      popUp.setContent(content);
+
+      const answers = document.querySelectorAll('.answer-button');
+      const errorMessage = document.getElementById('error-message');
+
+      answers.forEach(answer => {
+        answer.addEventListener('click', () => {
+          if (answer.id === 'yes-button'){
+
+            let totalPercentage = 0;
+            Object.values(billageMembers).forEach(member => {
+              const memberId = member.id;
+              const inputField = document.getElementById(`member-${memberId}`);
+              const percentage = parseFloat(inputField.value) || 0;
+              totalPercentage += percentage;
+            });
+      
+            if (totalPercentage !== 100) {
+              errorMessage.style.color = 'red';
+              errorMessage.style.display = 'block';
+              errorMessage.textContent = "Your Bill Splits Must Total 100%"
+              return
+            }
+
+            errorMessage.style.color = 'Green';
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = "Your Bill Has Been Added!"
+
+          }else{
+            popUp.closePopUp();
+          }
+        
+    })
+
+})}
+
+
+
+export async function addLinkedBillButton(billageMembers, user_id) {
   const addBillButton = document.querySelectorAll('.add-linked-bill')
+
   addBillButton.forEach(button => {
     button.addEventListener('click', () => {
       popUp.elements.forEach(element => {element.style.filter = 'blur(7px)'});
@@ -568,10 +659,19 @@ export async function addLinkedBillButton() {
       popUp.setContent(content);
 
       document.getElementById('yes-button').addEventListener('click', function() {
+        const errorMessage = document.getElementById('error-message');
         const billProvider = document.getElementById('bill-provider-input').value;
         const billType = document.getElementById('bill-type-input').value;
-        
-        addLinkedBill(billProvider, billType);
+
+        if (!billProvider) {
+          errorMessage.style.color = 'red';
+          errorMessage.style.display = 'block';
+          errorMessage.textContent = "Bill Provider cannot be blank"
+          return
+        }
+
+        addLinkedBillSplitsPopUp(billageMembers, user_id)
+
       });
       
 

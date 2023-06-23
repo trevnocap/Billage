@@ -36,7 +36,7 @@ class PaymentMethodsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserPaymentMethod
-        exclude = ('user', 'payment_method_id',)
+        exclude = ('user',)
         
     def get_payment_details(self, obj):
         if obj.payment_type == 'bank_account':
@@ -62,9 +62,21 @@ class BillageBillSerializer(serializers.ModelSerializer):
         exclude = ('date_created',)
 
 class LinkedBillSerializer(serializers.ModelSerializer):
+    linked_bill = serializers.UUIDField(required=False)
+
     class Meta:
         model = LinkedBill
-        exclude = ('date_created',)
+        fields = '__all__'
+
+    def create(self, validated_data):
+        linked_bill = validated_data.pop('linked_bill', None)
+
+        if linked_bill is None:
+            linked_bill = uuid.uuid4()
+
+        validated_data['linked_bill'] = linked_bill
+        return super().create(validated_data)
+
         
 class UserActiveBillDueSerializer(serializers.ModelSerializer):
     billage = serializers.CharField(source = "linked_bill.billage_link.billage_name")
@@ -128,7 +140,7 @@ class ManageViewBillageSerializer(serializers.ModelSerializer):
 
 class ManageViewLinkedBillSerializer(LinkedBillSerializer):
     class Meta(LinkedBillSerializer.Meta):
-        exclude = ('date_created', 'billage_link',)
+        fields = '__all__'
         
 class ManageViewBillageBillSerializer(BillageBillSerializer):
     linked_bill = serializers.CharField(source = 'linked_bill.bill_provider_name')
